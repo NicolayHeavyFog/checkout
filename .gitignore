@@ -22,6 +22,8 @@ dist/
 # Maven
 target/
 dist/
+.cache/
+public/
 
 # JetBrains IDE
 .idea/

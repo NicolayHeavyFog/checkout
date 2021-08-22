@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@vue/component-compiler-utils": "3.2.0",
-    "parcel": "1.12.4",
+    "parcel": "1.12.3",
     "parcel-plugin-custom-dist-structure": "1.1.16",
     "pug": "3.0.0",
     "vue-template-compiler": "2.6.12"
