@@ -1,0 +1,175 @@
+{
+  "airline_id": 4,
+  "enabled": true,
+  "fields": [{
+    "name": "last_name",
+    "type": "text",
+    "label": "Фамилия",
+    "pattern": "^[а-яА-ЯёЁa-zA-Z ]+$",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 1,
+    "value": null,
+    "title": "Обязательное поле",
+    "values": [],
+    "for_form": "passenger"
+  }, {
+    "name": "flight_number",
+    "type": "text",
+    "label": "Номер рейса",
+    "pattern": "^(?!.*(9U|YM|YC|3626|676$|6114|934$|628$|926$|635$|608$|684|624$|930|870|614|4[0-9]{3}))[а-яА-ЯёЁa-zA-Z0-9 -_]{2,10}",
+    "required": true,
+    "max_length": 10,
+    "min_length": 2,
+    "order": 3,
+    "value": null,
+    "title": "Номер рейса из 2-10 символов. Пример: S7-910",
+    "values": [],
+    "for_form": "order"
+  }, {
+    "name": "universal_field",
+    "type": "text",
+    "label": "Номер билета или бронирования",
+    "pattern": "(^[0-9]{13}$)|(^[a-zA-Z0-9]{5,7}$)",
+    "required": true,
+    "max_length": 13,
+    "min_length": 5,
+    "order": 4,
+    "value": null,
+    "title": "Номер билета из 13 цифр или номер бронирования из 5-6 символов. Пример: 4210123456789 или XZKLD",
+    "values": [],
+    "for_form": "passenger"
+  }, {
+    "name": "departure_date",
+    "type": "date",
+    "label": "Дата вылета",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 6,
+    "value": null,
+    "title": "Обязательное поле",
+    "values": [],
+    "for_form": "order"
+  }, {
+    "name": "email",
+    "type": "email",
+    "label": "Электронная почта",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 7,
+    "value": null,
+    "title": "Обязательное поле",
+    "values": [],
+    "for_form": "order"
+  }, {
+    "name": "seat",
+    "type": "select",
+    "label": "Пожелания по месту",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 97,
+    "value": null,
+    "title": null,
+    "values": [{
+      "label": "Любое место",
+      "value": "any",
+      "order": 1
+    }, {
+      "label": "В начале салона",
+      "value": "beg",
+      "order": 2
+    }, {
+      "label": "В середине салона",
+      "value": "mid",
+      "order": 3
+    }, {
+      "label": "В конце салона",
+      "value": "end",
+      "order": 4
+    }],
+    "for_form": "passenger"
+  }, {
+    "name": "salon",
+    "type": "select",
+    "label": "Пожелания по салону",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 98,
+    "value": null,
+    "title": null,
+    "values": [{
+      "label": "Любое место",
+      "value": "any",
+      "order": 1
+    }, {
+      "label": "У окна",
+      "value": "win",
+      "order": 2
+    }, {
+      "label": "У прохода",
+      "value": "ais",
+      "order": 3
+    }, {
+      "label": "Средний ряд",
+      "value": "mid",
+      "order": 4
+    }],
+    "for_form": "passenger"
+  }, {
+    "name": "tariff",
+    "type": "select",
+    "label": "Регистрация на рейс:",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 99,
+    "value": null,
+    "title": null,
+    "values": [{
+      "label": "В одну сторону",
+      "value": "oneway",
+      "order": 1
+    }, {
+      "label": "Туда-обратно",
+      "value": "roundtrip",
+      "order": 2
+    }],
+    "for_form": "order"
+  }, {
+    "name": "checkoutId",
+    "type": "hidden",
+    "label": "checkoutId",
+    "pattern": "",
+    "required": true,
+    "max_length": 36,
+    "min_length": 0,
+    "order": 99,
+    "value": null,
+    "title": null,
+    "values": [],
+    "for_form": "order"
+  }, {
+    "name": "airline",
+    "type": "hidden",
+    "label": "airline",
+    "pattern": "",
+    "required": true,
+    "max_length": 255,
+    "min_length": 0,
+    "order": 99,
+    "value": null,
+    "title": null,
+    "values": [],
+    "for_form": "order"
+  }]
+}

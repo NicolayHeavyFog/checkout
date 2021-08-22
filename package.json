@@ -1,0 +1,53 @@
+{
+  "name": "checkin",
+  "version": "1.0.0",
+  "description": "Checkin parcel",
+  "author": "Artem Rubeykin",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf dist/*",
+    "prestart": "rsync -a static/ dist/static/",
+    "start": "parcel src/*.pug",
+    "build": "parcel build src/*.pug --out-dir public"
+  },
+  "alias": {
+    "~": "./src",
+    "vue": "./node_modules/vue/dist/vue.common.js"
+  },
+  "customDistStructure": {
+    "config": {
+      "assets/js": [
+        ".js"
+      ],
+      "assets/css": [
+        ".css"
+      ],
+      "assets/i": [
+        ".jpg",
+        ".svg",
+        ".png"
+      ],
+      "assets/fonts": [
+        ".woff",
+        ".ttf",
+        ".eot"
+      ]
+    },
+    "options": {
+      "development": false
+    }
+  },
+  "dependencies": {
+    "axios": "0.20.0",
+    "dayjs": "1.8.35",
+    "vue": "2.6.12",
+    "vue-hot-reload-api": "2.3.4"
+  },
+  "devDependencies": {
+    "@vue/component-compiler-utils": "3.2.0",
+    "parcel": "1.12.4",
+    "parcel-plugin-custom-dist-structure": "1.1.16",
+    "pug": "3.0.0",
+    "vue-template-compiler": "2.6.12"
+  }
+}
