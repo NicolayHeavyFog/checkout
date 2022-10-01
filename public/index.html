@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en" class="page">
+
+<head>
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <meta name="description" content="Проверка авио билетов">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="msapplication-TileImage" content="./assets/images/favicon/ms-icon-144x144.png">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preload" href="./assets/fonts/roboto-regular-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/roboto-medium-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./assets/fonts/roboto-bold-webfont.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./css/index.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+</head>
+
+<body class="page__body green">
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled.
+        Please enable it to continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <header class="header">
+    <div class="container">
+      <h1 class="header__title">Онлайн-регистрация на&nbsp;рейс&nbsp;№45219</h1>
+      <div class="header-places">
+        <div class="header-places__departure">
+          <h2 class="header-places__city">Москва</h2><span class="header-places__ICAO">UUDD</span> <span
+            class="header-places__time">27 августа, чт, 10:00</span>
+        </div><svg class="header-places__icon">
+          <use xlink:href="./sprite.svg#airplane"></use>
+        </svg>
+        <div class="header-places__destination">
+          <h2 class="header-places__city">Владивосток</h2><span class="header-places__ICAO">UHWW</span> <span
+            class="header-places__time">28 августа, чт, 12:20</span>
+        </div>
+      </div><span class="header__submessage"><svg class="header__submessage-icon">
+          <use xlink:href="./sprite.svg#timeIcon"></use>
+        </svg> <span class="header__submessage-notification">Регистрация завершиться через 4 часа</span> </span><button
+        class="button button__secondary header__button">Изменить данные рейса</button>
+    </div>
+  </header>
+  <main class="main">
+    <div class="container">
+      <section class="carts">
+        <h2 class="carts__title">Пассажиры</h2>
+        <div class="carts__container">
+
+          </article> --><article class="cart"><button class="cart__cancel"></button>
+            <form action="#"><label><span class="cart__label">Фамилия, как указана в билете</span></label>
+              <label><span class="cart__label">Номер билета, брони или паспорта</span></label>
+
+              <div class="cart__notification"><span class="cart__notification-message">Номер билета из 13 цифр. Пример:
+                  5550123456789</span><br><span class="cart__notification-message">Номер брони из 6 символов. Пример:
+                  XZKLDR</span></div><label><span class="cart__label">Пожелания по салону</span></label> <label><span
+                  class="cart__label">Пожелания по месту</span></label>
+            </form>
+          </article><button class="cart-suggestion"><svg class="cart-suggestion__icon">
+              <use xlink:href="/sprite.svg#userIcon"></use>
+            </svg> <span class="cart-suggestion__message">+ Добавить пассажира</span></button></div>
+      </section>
+      <section class="limitations">
+        <h2 class="limitations__title">Ограничения</h2>
+        <ul class="limitations__list">
+          <li class="limitations__item">Онлайн-регистрация заканчивается за 4 часа до вылета</li>
+          <li class="limitations__item">Вы не перевозите оружие и животных</li>
+          <li class="limitations__item">Веб-регистрация доступны для всех рейсов, вылетающих из Кишинева, Парижа,
+            Лиссабона, Пармы, Вероны, Дублина, Воронежа, Москвы (Домодедово и Внуково) и Санкт-Петербурга.</li>
+        </ul>
+      </section>
+      <section class="mailer">
+        <div class="mailer__win"><label><span class="mailer__label">Эл. почта для подтверждение о
+              регистрации</span></label></div>
+      </section>
+      <section class="output"><span class="output__message">Количество пассажиров: 2</span> <span
+          class="output__message">К оплате: 129 000 ₽</span></section><label class="main__checkbox-container"><input
+          type="checkbox" class="main__checkbox"> <span class="main__checkbox-label">Регистрация на обратный
+          рейс</span></label> <button class="main__button button button__primary">Зарегистрироваться</button>
+    </div>
+    <div class="popup container">
+      <div class="cart-map">
+        <div class="cart-map__left-side"><span class="cart-map__description">Выберите место для пассажиров:</span>
+          <ul class="cart-map__list">
+            <li class="cart-map__item"><button class="cart-map__item-button"><strong class="cart-map__item-name">Виталий
+                  Колесник</strong> <span class="cart-map__item-status">Место не выбрано</span></button></li>
+            <li class="cart-map__item cart-map__item--selected"><button class="cart-map__item-button"><strong
+                  class="cart-map__item-name">Наталья Чемерисова</strong> <span class="cart-map__item-status">Место не
+                  выбрано</span></button></li>
+            <li class="cart-map__item cart-map__item--success"><button class="cart-map__item-button"><strong
+                  class="cart-map__item-name">Олег Игнатов</strong> <span class="cart-map__item-status">место 14С за 129
+                  000 ₽</span></button></li>
+          </ul>
+          <div class="cart-map__group-button"><button class="button button__primary cart-map__button">Продолжить выбор
+              мест</button> <button class="cart-map__cancel">Отменить</button></div>
+        </div>
+        <div class="cart-map__right-side">
+          <div class="cart-map__map-container">
+            <table class="cart-map__map">
+              <tr class="cart-map__horizontal-list">
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">A</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">B</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">C</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">D</span></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">E</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">F</span></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">G</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">H</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">J</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">K</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">K</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">K</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">K</span></td>
+                <td class="cart-map__map-seat"><span class="cart-map__map-column">K</span></td>
+              </tr>
+              <tr class="cart-map__horizontal-row">
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr class="cart-map__horizontal-row">
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr class="cart-map__horizontal-row">
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occup ied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr class="cart-map__horizontal-row">
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr>
+                <td class="cart-map__row-number"><span class="cart-map__map-row">1</span></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">Н</button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat selected"><button class="cart-map__map-button">В</button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat free"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat empty"></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+                <td class="cart-map__map-seat occupied"><button class="cart-map__map-button"></button></td>
+              </tr>
+              <tr class="cart-map__price-container">
+                <td>
+                  <aside>Цены</aside>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="cart-map__group-button mobile-buttons"><button
+            class="button button__primary cart-map__button">Продолжить выбор мест</button> <button
+            class="cart-map__cancel">Отменить</button></div>
+      </div>
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <p class="footer__text">Нажимая на кнопку «Зарегистрироваться», вы соглашаетесь с тем, что прочитали и принимаете
+        <a class="footer__link footer__link--underline footer__link--grey">соглашение</a> с Checkin24.
+      </p>
+      <p class="footer__text footer__text--color-black">Ответы на самые волнующие вопросы <a
+          class="footer__link">здесь</a>.</p>
+      <p class="footer__text footer__text--color-black">У вас есть вопросы или предпочтения, то можете связаться с нами
+        по эл. почте: <a class="footer__link">support@checkin24.ru</a> или онлайн-чату, который доступен справа внизу
+        экрана.</p>
+    </div>
+  </footer>
+</body>
+
+</html>
