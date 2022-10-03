@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: 'RegUsersInSirena'
+  description: >
+    Регистрация пользователей сирены
+servers:
+  - url: '{protocol}://{host}'
+    variables:
+      protocol:
+        default: https
+      host:
+        default: test
+security:
+  - basicAuth: []
+paths:
+  /doByPassengers:
+    post:
+      tags:
+        - general
+      summary: Выполнение инфы с пользователями по типам
+      description: Запрос для получение инфы по пользователям. Некоторые сайты не разрешают делать массовое добавление. Делаются поочередные запрос в зависимости от переданного типа. Из инфы можно отобразить интерфейс для пользователя или выбрать место.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              title: Объект с параметрами взависимости от типа
+              description: ticketInfo - получение инфы по билету и пользователю(если несколько сегментов вернётся карта по выбору сегмента), mapInfo - получение карты свободных мест, getSeat - выбор места пользователю(seatNumber обязательный тут параметр), segmentsGroupIndex - какой сегмент регаем
+              type: object
+              example: {
+                "type": "ticketInfo|mapInfo|getSeat",
+                "site":"https://checkin.azurair.ru/oxygen-check-in",
+                "passengers": [
+                  {"seatNumber":"32E","lastName":"IULDASHEVA","ticketNumber":"0370014840865","segmentsGroupIndex":"0","segmentIndex":"0"},
+                  {"seatNumber":"32C","lastName":"YULDASHEVA","ticketNumber":"0370014840852","segmentsGroupIndex":"0","segmentIndex":"0"}
+                ]
+              }
+      responses:
+        '200':
+          description: OK,
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400Put'
+  /getTicketView:
+    get:
+      tags:
+        - general
+      summary: Тестовая страница проверить определённый билет
+      description: Отобразить страшную страницу, но рабочую =)
+      parameters:
+        - in: query
+          name: site
+          schema:
+           type: string
+          description: сайт на котором чекаем
+        - in: query
+          name: lastName
+          schema:
+           type: string
+          description: фамилия пассажира
+        - in: query
+          name: ticketNumber
+          schema:
+           type: string
+          description: номер билета
+      responses:
+        '200':
+          description: OK,
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400Put'
+  /getTicketInfo:
+    get:
+      tags:
+        - general
+      summary: Получить инфу по билетам в json(для теста)
+      description: Для отрисовки на сайте
+      parameters:
+        - in: query
+          name: site
+          schema:
+           type: string
+          description: сайт на котором чекаем
+        - in: query
+          name: lastName
+          schema:
+           type: string
+          description: фамилия пассажира
+        - in: query
+          name: ticketNumber
+          schema:
+           type: string
+          description: номер билета
+      responses:
+        '200':
+          description: OK,
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400Put'
+  /getMapInfo:
+    get:
+      tags:
+        - general
+      summary: Получить инфу по местам в json(для теста)
+      description: Для отрисовки на сайте
+      parameters:
+        - in: query
+          name: site
+          schema:
+           type: string
+          description: сайт на котором чекаем
+        - in: query
+          name: lastName
+          schema:
+           type: string
+          description: фамилия пассажира
+        - in: query
+          name: ticketNumber
+          schema:
+           type: string
+          description: номер билета
+      responses:
+        '200':
+          description: OK,
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/400Put'
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    200Put:
+      title: Успешная обработка запроса
+      type: object
+      properties:
+        complete:
+          type: string
+          description: Статус операции
+          enum:
+            - true
+    400Put:
+      title: Некорректные данные запроса
+      type: object
+      properties:
+        error:
+          type: object
+          description: Ошибка
+          properties:
+            error:
+              type: string
+              description: Описание ошибки
+            complete:
+              type: boolean
+              description: Выполнился ли запрос до конца
+  responses:
+    200Put:
+      description: Запрос отправлен
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/200Put'
+    400Put:
+      description: Некорректные данные запроса
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/400Put'
