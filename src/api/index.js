@@ -1,7 +1,7 @@
-import {base} from './base'
-import {parser} from './parser'
+import instance from "./instance";
 
-export const Api = {
-  parser,
-  base,
+import info from "./passengerInfo";
+
+export default {
+  passenger: info(instance),
 };
