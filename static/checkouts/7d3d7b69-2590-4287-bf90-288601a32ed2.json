@@ -1,0 +1,24 @@
+{
+  "checkoutId": "7d3d7b69-2590-4287-bf90-288601a32ed2",
+  "airline": "aeroflot",
+  "first_name": null,
+  "last_name": "Петров",
+  "pnr": null,
+  "ticket_number": null,
+  "flight_number": "1513",
+  "universal_field": "4654545646431",
+  "from_airport": null,
+  "departure_date": "30.04.2020",
+  "email": "razor@jaaah.ru",
+  "seat": "beg",
+  "salon": "win",
+  "tariff": "oneway",
+  "checkin_is_closed": false,
+  "only_oneway": false,
+  "dateCreated": "2020-04-05T00:17:03.985236+03:00",
+  "minutes_until_flight": null,
+  "flight": {
+    "full_flight_number": "SU1513",
+    "title": "Сургут — Москва"
+  }
+}

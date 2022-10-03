@@ -1,0 +1,12 @@
+{
+  "id": 5,
+  "iata_code": "UT",
+  "name": "Utair",
+  "enabled": true,
+  "slug": "utair",
+  "tariff_ow": 350.0,
+  "tariff_rt": 700.0,
+  "tariff_currency": "RUB",
+  "min_time": "3 часа",
+  "warning_text": null
+}

@@ -1,0 +1,30 @@
+.theme-default {}
+.theme-default .legend__header, .theme-default .legend__header.l-substrate {background: #000036;}
+.theme-default .btn {background: #07237E; border: 1px #07237E solid;color: #fff;}
+.theme-default .btn--secondary {color: #07237E;background: #fff;font-weight: 700;}
+
+.theme-default .app__body,
+.theme-default .places__selector,
+.theme-default .places__toggler
+{ background: #F2F5FF; }
+
+.theme-default .select__divider,
+.theme-default .main__append,
+.theme-default .notice-s a
+{ color: #07237E; border-color: #07237E; }
+
+
+.theme-green {}
+.theme-green .legend__header {background: #A7C42A;}
+.theme-green .btn {background: #A7C42A;border: 1px #A7C42A solid;color: #fff;}
+.theme-green .btn--secondary {color: #A7C42A;background: #fff;font-weight: 700;}
+
+.theme-green .app__body,
+.theme-green .places__selector,
+.theme-green .places__toggler
+{ background: #F4F4F4; }
+
+.theme-green .select__divider,
+.theme-green .main__append,
+.theme-green .notice-s a
+{color: #A7C42A;border-color: #A7C42A;}
