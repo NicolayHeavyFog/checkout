@@ -9,6 +9,7 @@
           :key="index"
           :card.sync="cards[index]"
           @removeCard="removeCard"
+          :map-seats="mapSeats"
         />
         <button class="card-suggestion" @click="createCard()">
           <svg class="card-suggestion__icon">
@@ -71,6 +72,9 @@ export default {
   props: {
     passengerCard: {
       type: Object,
+    },
+    mapSeats: {
+      type: Array,
     },
   },
   data() {

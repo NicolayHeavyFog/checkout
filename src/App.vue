@@ -5,7 +5,11 @@
       :info="headerInfo"
       @change-flight="changeFlight()"
     />
-    <MainPage :preloader="fetchStatus.loading" :passenger-card="data" />
+    <MainPage
+      :preloader="fetchStatus.loading"
+      :passenger-card="data"
+      :map-seats="mapSeats"
+    />
     <MainFooter v-if="webCheckInOpen" />
     <v-app>
       <v-dialog v-model="dialog" persistent max-width="809">
@@ -38,8 +42,8 @@
                         {{ convertTime(seg.departureDateTime) }}</span
                       >
                     </div>
-                    <span class="suggestion__text"
-                      >Веб-регистрация на рейс:
+                    <span class="suggestion__text">
+                      Веб-регистрация на рейс:
                       <span
                         :class="
                           seg.status === 'OPENED'
@@ -47,10 +51,9 @@
                             : 'suggestion__text--color-red'
                         "
                       >
-                        &nbsp;
                         {{
                           seg.status === "OPENED"
-                            ? `открыта до ${convertTime(
+                            ? ` открыта до ${convertTime(
                                 seg.webCheckInClose,
                                 "dd MMMM yyyy, HH:MM"
                               )}`
@@ -80,17 +83,20 @@
               :text="'Перейти к веб-регистрации'"
               @click="setTicket()"
             />
-            <!-- <v-btn text class="button"> Отменить </v-btn> -->
             <v-spacer></v-spacer>
           </div>
         </v-card>
       </v-dialog>
-      <div class="popup" v-if="!fetchStatus.success">
-        <v-alert prominent type="error">
+      <div class="popup">
+        <v-alert prominent type="error" v-if="!fetchStatus.success">
           Билет не найден
-
           <v-btn @click="fetch()">Повторить запрос</v-btn>
         </v-alert>
+        <!-- <v-alert border="top" colored-border type="info" elevation="2">
+          Vestibulum ullamcorper mauris at ligula. Nam pretium turpis et arcu.
+          Ut varius tincidunt libero. Curabitur ligula sapien, tincidunt non,
+          euismod vitae, posuere imperdiet, leo. Morbi nec metus.
+        </v-alert> -->
       </div>
     </v-app>
   </div>
@@ -118,6 +124,7 @@ export default {
       segmentsData: null,
       fullData: null,
       webCheckInOpen: null,
+      mapSeats: null,
       fetchStatus: {
         success: true,
         loading: true,
@@ -209,6 +216,8 @@ export default {
           api.passenger.infoDetailed({ type: "getSeat", ...payload }),
         ]);
 
+        this.mapSeats = mapInfo.data;
+
         // console.log(ticketInfo, mapInfo);
         // if (ticketInfo === "fulfilled") {
         //   console.log("Информация о билете получена успешно");
@@ -242,14 +251,8 @@ export default {
           console.log(passenger.status);
           this.changeGlobalColor();
         }
-        // console.log("check");
-        // if (this.comparisonTime(this.webCheckInOpen)) {
-        //   console.log("checkTime");
-        //   this.changeGlobalColor();
-        // }
         this.fetchStatus.success = true;
         this.fetchStatus.loading = false;
-        // console.log(this.fetchStatus.loading);
       } catch (err) {
         console.log("Произошла ошибка");
         this.fetchStatus.success = false;
@@ -420,7 +423,7 @@ export default {
     }
 
     & .v-input--selection-controls__input {
-      height: 32px;
+      height: 26px;
     }
 
     & .v-application--is-ltr .v-input--selection-controls__input {
@@ -481,8 +484,9 @@ export default {
 
     .suggestion__row.active &::before {
       content: "";
+      position: absolute;
       display: inline-block;
-      left: 0;
+      left: -15px;
       width: 10px;
       height: 10px;
       margin-right: 5px;
@@ -499,19 +503,77 @@ export default {
     margin-right: 10px;
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: 735px) {
     &__row {
+      padding: 10px 19px 10px 19px;
+
       & .v-label {
         flex-direction: column;
       }
 
       &-left {
         width: 100%;
+        height: fit-content;
       }
 
       &-right {
         width: 100%;
+        height: fit-content;
+        flex-direction: row;
+
+        & .suggestion__subtitle:first-child {
+          margin-right: 10px;
+        }
       }
+    }
+
+    &__header {
+      gap: unset;
+      grid-template-columns: unset;
+      grid-template-rows: unset;
+      margin-bottom: 10px;
+
+      & .suggestion__subtitle:nth-child(2) {
+        display: block;
+      }
+    }
+
+    &__title {
+      font-size: 18px;
+      line-height: 21px;
+      margin-right: 10px;
+    }
+
+    &__subtitle {
+      font-size: 16px;
+
+      &--mb-10 {
+        margin-bottom: 0;
+      }
+    }
+
+    &__text {
+      display: inline-block;
+      align-items: unset;
+      align-self: unset;
+      font-size: 14px;
+      line-height: 16px;
+      margin-bottom: 5px;
+
+      &::before {
+        top: 3px;
+      }
+    }
+
+    &__button-group {
+      padding: 0 22px 25px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    &__header {
+      align-items: flex-start;
+      flex-direction: column;
     }
   }
 }

@@ -8,7 +8,11 @@
         <v-skeleton-loader type="card@2"></v-skeleton-loader>
       </div>
     </div>
-    <PassengerList v-else :passenger-card="passengerCard" />
+    <PassengerList
+      v-else
+      :passenger-card="passengerCard"
+      :map-seats="mapSeats"
+    />
     <CardMap style="display: none" />
   </main>
 </template>
@@ -29,6 +33,9 @@ export default {
     },
     passengerCard: {
       type: Object,
+    },
+    mapSeats: {
+      type: Array,
     },
   },
   data() {
@@ -58,10 +65,19 @@ export default {
     & .v-skeleton-loader {
       display: flex;
       justify-content: space-between;
+      flex-wrap: wrap;
     }
 
     & .v-skeleton-loader__image {
       height: 400px;
+    }
+  }
+
+  @media (max-width: 750px) {
+    &__sceleton {
+      & .v-skeleton-loader__card {
+        width: 100%;
+      }
     }
   }
 }

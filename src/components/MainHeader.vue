@@ -1,5 +1,8 @@
 <template>
-  <header class="header">
+  <header
+    class="header"
+    :class="info.status === 'OPENED' ? 'registration-open' : ''"
+  >
     <div class="container header__sceleton" v-if="preloader">
       <v-skeleton-loader
         :loading="true"
@@ -41,7 +44,7 @@
         </svg>
         <span class="header__submessage-notification">{{
           info.status === "OPENED"
-            ? `Регистрация завершиться ${convertTime(info.webCheckInClose)}`
+            ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
             : "Регистрация завершена"
         }}</span>
       </span>
@@ -109,6 +112,20 @@ export default {
     width: 256px;
     height: 40px;
     transform: translate(0, 80px);
+  }
+
+  @media (max-width: 750px) {
+    & .v-skeleton-loader__heading {
+      height: 50px;
+    }
+
+    & .v-skeleton-loader__paragraph {
+      width: 80%;
+    }
+
+    & .v-skeleton-loader__text {
+      height: 25px;
+    }
   }
 }
 </style>

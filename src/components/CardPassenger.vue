@@ -33,16 +33,22 @@
           >Номер брони из 6 символов. Пример: XZKLDR</span
         >
       </div>
-      <label><span class="card__label">Пожелания по салону</span></label>
-      <label><span class="card__label">Пожелания по месту</span></label>
-      <v-bottom-sheet v-model="sheet">
+      <!-- <label><span class="card__label">Пожелания по салону</span></label> -->
+      <label><span class="card__label">Место</span></label>
+      <v-text-field
+        label="Место"
+        v-model="seat"
+        single-line
+        outlined
+        hint="Место"
+      ></v-text-field>
+      <v-bottom-sheet v-model="sheet" inset max-width="960">
         <template v-slot:activator="{}">
           <BaseButton
             :text="'Выбрать'"
             :status="'primary'"
             @click="sheet = true"
           />
-          <!-- <v-btn color="purple" dark v-bind="attrs" v-on="on"> Изменить </v-btn> -->
         </template>
         <div class="card-map">
           <div class="card-map__left-side">
@@ -81,203 +87,7 @@
             </div>
           </div>
           <div class="card-map__right-side">
-            <div class="card-map__map-container">
-              <table class="card-map__map">
-                <tr class="card-map__horizontal-list">
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">A</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">B</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">C</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">D</span>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">E</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">F</span>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">G</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">H</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">J</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">K</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">K</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">K</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">K</span>
-                  </td>
-                  <td class="card-map__map-seat">
-                    <span class="card-map__map-column">K</span>
-                  </td>
-                </tr>
-                <tr class="card-map__horizontal-row">
-                  <td class="card-map__row-number">
-                    <span class="card-map__map-row">1</span>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">Н</button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">В</button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat free">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                </tr>
-                <tr class="card-map__horizontal-row">
-                  <td class="card-map__row-number">
-                    <span class="card-map__map-row">1</span>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">Н</button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">В</button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat free">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                </tr>
-                <tr class="card-map__horizontal-row">
-                  <td class="card-map__row-number">
-                    <span class="card-map__map-row">1</span>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">Н</button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat selected">
-                    <button class="card-map__map-button">В</button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat free">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat empty"></td>
-                  <td class="card-map__map-seat occup ied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                  <td class="card-map__map-seat occupied">
-                    <button class="card-map__map-button"></button>
-                  </td>
-                </tr>
-
-                <tr class="card-map__price-container">
-                  <td>
-                    <aside>Цены</aside>
-                  </td>
-                </tr>
-              </table>
-            </div>
+            <MapSeats :map-seats="mapSeats" />
           </div>
           <div class="card-map__group-button mobile-buttons">
             <button class="button button__primary card-map__button">
@@ -286,24 +96,6 @@
             <button class="card-map__cancel">Отменить</button>
           </div>
         </div>
-        <!-- <v-list>
-          <v-subheader>Open in</v-subheader>
-          <v-list-item
-            v-for="tile in tiles"
-            :key="tile.title"
-            @click="sheet = false"
-          >
-            <v-list-item-avatar>
-              <v-avatar size="32px" tile>
-                <img
-                  :src="`https://cdn.vuetifyjs.com/images/bottom-sheets/${tile.img}`"
-                  :alt="tile.title"
-                />
-              </v-avatar>
-            </v-list-item-avatar>
-            <v-list-item-title>{{ tile.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list> -->
       </v-bottom-sheet>
     </form>
   </article>
@@ -311,11 +103,16 @@
 
 <script>
 import BaseButton from "@/components/BaseButton.vue";
+import MapSeats from "@/components/MapSeats.vue";
 export default {
-  components: { BaseButton },
+  components: { BaseButton, MapSeats },
   props: {
     card: {
       type: Object,
+      required: true,
+    },
+    mapSeats: {
+      type: Array,
       required: true,
     },
   },
@@ -324,6 +121,7 @@ export default {
       sheet: false,
       passengerName: null,
       numberTickets: null,
+      seat: null,
       id: null,
     };
   },
@@ -335,7 +133,6 @@ export default {
   watch: {
     card: {
       handler(val) {
-        // console.log(val);
         this.passengerName = val.passengerName;
         this.numberTickets = val.numberTickets;
         this.id = val.id;
