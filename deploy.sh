@@ -8,5 +8,5 @@ cd dist
 git init 
 git add -A
 git commit -m 'deploy'
-git push -f git@github.com:NicolayHeavyFog/checkout.git master:gh-pages
+git push -f https://github.com/NicolayHeavyFog/checkout-build.git master:gh-pages
 cd -
