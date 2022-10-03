@@ -52,6 +52,7 @@ export default {
     & .v-skeleton-loader__card {
       display: inline-block;
       width: calc(100% / 2 - 16px);
+      border-radius: 10px;
     }
 
     & .v-skeleton-loader {

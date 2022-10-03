@@ -18,9 +18,9 @@
               info.departureCityCode
             }}</span>
           </div>
-          <span class="header-places__time">{{
-            convertTime(info.departureDateTime)
-          }}</span>
+          <span class="header-places__time">
+            {{ convertTime(info.departureDateTime) }}
+          </span>
         </div>
         <svg class="header-places__icon">
           <use xlink:href="#airplane"></use>
@@ -30,20 +30,27 @@
             <h2 class="header-places__city">{{ info.arrivalCity }}</h2>
             <span class="header-places__ICAO">{{ info.arrivalCityCode }}</span>
           </div>
-          <span class="header-places__time">{{
-            convertTime(info.arrivalDateTime)
-          }}</span>
+          <span class="header-places__time">
+            {{ convertTime(info.arrivalDateTime) }}
+          </span>
         </div>
       </div>
       <span class="header__submessage"
         ><svg class="header__submessage-icon">
           <use xlink:href="#timeIcon"></use>
         </svg>
-        <span class="header__submessage-notification"
-          >Регистрация завершиться {{ convertTime(info.webCheckInClose) }}</span
-        >
+        <span class="header__submessage-notification">{{
+          info.status === "OPENED"
+            ? `Регистрация завершиться ${convertTime(info.webCheckInClose)}`
+            : "Регистрация завершена"
+        }}</span>
       </span>
-      <v-btn absolute x-large class="button button__secondary header__button">
+      <v-btn
+        @click="changeFlight()"
+        absolute
+        x-large
+        class="button button__secondary header__button"
+      >
         <!-- <button class="button button__secondary header__button"> -->
         Изменить данные рейса
         <!-- </button> -->
@@ -69,6 +76,9 @@ export default {
   },
   methods: {
     convertTime,
+    changeFlight() {
+      this.$emit("change-flight");
+    },
   },
 };
 </script>

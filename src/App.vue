@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <MainHeader :preloader="fetchStatus.loading" :info="headerInfo" />
+    <MainHeader
+      :preloader="fetchStatus.loading"
+      :info="headerInfo"
+      @change-flight="changeFlight()"
+    />
     <MainPage :preloader="fetchStatus.loading" :passenger-card="data" />
     <MainFooter v-if="webCheckInOpen" />
     <v-app>
@@ -81,12 +85,19 @@
           </div>
         </v-card>
       </v-dialog>
+      <div class="popup" v-if="!fetchStatus.success">
+        <v-alert prominent type="error">
+          Билет не найден
+
+          <v-btn @click="fetch()">Повторить запрос</v-btn>
+        </v-alert>
+      </div>
     </v-app>
   </div>
 </template>
 
 <script>
-import { convertTime } from "@/helpers";
+import { convertTime, comparisonTime } from "@/helpers";
 import MainHeader from "@/components/MainHeader.vue";
 import MainFooter from "@/components/MainFooter.vue";
 // import BasePopup from "@/components/BasePopup.vue";
@@ -117,6 +128,10 @@ export default {
   },
   methods: {
     convertTime,
+    comparisonTime,
+    changeFlight() {
+      this.dialog = true;
+    },
     async getPerson() {
       const id = this.$route.query.id;
       try {
@@ -183,14 +198,15 @@ export default {
             {
               lastName: this.data.last_name,
               ticketNumber: this.data.ticket_number,
-              // segmentIndex: String(this.radioGroup),
-              // segmentsGroupIndex: String(this.radioGroup),
+              segmentIndex: String(this.radioGroup),
+              segmentsGroupIndex: String(this.radioGroup),
             },
           ],
         };
-        const [ticketInfo, mapInfo] = await Promise.all([
+        const [ticketInfo, mapInfo, seat] = await Promise.all([
           api.passenger.infoDetailed({ type: "ticketInfo", ...payload }),
           api.passenger.infoDetailed({ type: "mapInfo", ...payload }),
+          api.passenger.infoDetailed({ type: "getSeat", ...payload }),
         ]);
 
         // console.log(ticketInfo, mapInfo);
@@ -201,8 +217,9 @@ export default {
         // if (mapInfo === "fulfilled") {
         //   console.log("Информация о местах получена успешно");
         // } else return new Error("Ошибка в получении карты мест");
-        console.log(ticketInfo.data, mapInfo.data);
+        console.log(ticketInfo.data, mapInfo.data, seat.data);
         const passenger = ticketInfo.data[0].segments[0];
+        // const status = passenger.stages.status;
         this.headerInfo = {
           departureDateTime: passenger.departureDateTime,
           arrivalDateTime: passenger.arrivalDateTime,
@@ -212,7 +229,24 @@ export default {
           departureCity: passenger.departureCity,
           departureCityCode: passenger.departureCityCode,
           webCheckInClose: passenger.stages.webCheckInClose,
+          webCheckInOpen: passenger.stages.webCheckInOpen,
+          status: passenger.status,
         };
+        // this.webCheckInOpen = passenger.stages.webCheckInOpen;
+
+        if (
+          passenger.status !== "CLOSED" &&
+          passenger.status !== "OPENED" &&
+          passenger.status !== "TAKE_OFF"
+        ) {
+          console.log(passenger.status);
+          this.changeGlobalColor();
+        }
+        // console.log("check");
+        // if (this.comparisonTime(this.webCheckInOpen)) {
+        //   console.log("checkTime");
+        //   this.changeGlobalColor();
+        // }
         this.fetchStatus.success = true;
         this.fetchStatus.loading = false;
         // console.log(this.fetchStatus.loading);
@@ -223,81 +257,107 @@ export default {
     },
     async setTicket() {
       this.dialog = false;
+      this.fetchStatus.loading = true;
       await this.getData();
+    },
+
+    changeGlobalColor() {
+      document.body.classList.remove("blue");
+      document.body.classList.add("green");
+    },
+    async fetch() {
+      console.log("fetch");
+      try {
+        await this.getSegments();
+        if (this.segmentsData.result === "SELECT_SEGMENTS_GROUP") {
+          this.processingSegments();
+          this.dialog = true;
+        } else {
+          await this.getData();
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
   async created() {
-    await this.getSegments();
-    if (this.segmentsData.result === "SELECT_SEGMENTS_GROUP") {
-      this.processingSegments();
-      this.dialog = true;
-    } else {
-      await this.getData();
-    }
+    this.fetch();
 
-    [
-      {
-        xCount: 9,
-        yCount: 1,
-        rows: [
-          {
-            row_number: "1",
-            seats: [
-              {
-                available: true,
-                seatNumber: "1A",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              {
-                available: true,
-                seatNumber: "1B",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              {
-                available: true,
-                seatNumber: "1D",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              {
-                available: true,
-                seatNumber: "1E",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              { available: false, seatNumber: "", exists: false, rate: "" },
-              {
-                available: true,
-                seatNumber: "1F",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              {
-                available: false,
-                seatNumber: "1J",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-              {
-                available: false,
-                seatNumber: "1K",
-                exists: true,
-                rate: 3500,
-                currency: "РУБ",
-              },
-            ],
-          },
-        ],
-      },
-    ];
+    // try {
+    //   await this.getSegments();
+    //   if (this.segmentsData.result === "SELECT_SEGMENTS_GROUP") {
+    //     this.processingSegments();
+    //     this.dialog = true;
+    //   } else {
+    //     await this.getData();
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    // [
+    //   {
+    //     xCount: 9,
+    //     yCount: 1,
+    //     rows: [
+    //       {
+    //         row_number: "1",
+    //         seats: [
+    //           {
+    //             available: true,
+    //             seatNumber: "1A",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           {
+    //             available: true,
+    //             seatNumber: "1B",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           {
+    //             available: true,
+    //             seatNumber: "1D",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           {
+    //             available: true,
+    //             seatNumber: "1E",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           { available: false, seatNumber: "", exists: false, rate: "" },
+    //           {
+    //             available: true,
+    //             seatNumber: "1F",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           {
+    //             available: false,
+    //             seatNumber: "1J",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //           {
+    //             available: false,
+    //             seatNumber: "1K",
+    //             exists: true,
+    //             rate: 3500,
+    //             currency: "РУБ",
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   },
+    // ];
   },
 };
 </script>
@@ -319,6 +379,10 @@ export default {
 .v-application--wrap {
   min-height: unset !important;
   max-height: unset;
+}
+
+.v-bottom-sheet.v-dialog {
+  overflow: scroll;
 }
 
 .suggestion {
@@ -433,6 +497,22 @@ export default {
 
   .button--mr-10 {
     margin-right: 10px;
+  }
+
+  @media (max-width: 750px) {
+    &__row {
+      & .v-label {
+        flex-direction: column;
+      }
+
+      &-left {
+        width: 100%;
+      }
+
+      &-right {
+        width: 100%;
+      }
+    }
   }
 }
 </style>
