@@ -1,6 +1,5 @@
 <template>
   <Teleport to="#teleport-target">
-    <!-- <div> -->
     <Transition name="show" appear>
       <div v-if="condition" class="cart-mention">
         <span>К сожалению произошла ошибка</span>
@@ -9,7 +8,6 @@
         </v-app>
       </div>
     </Transition>
-    <!-- </div> -->
   </Teleport>
 </template>
 

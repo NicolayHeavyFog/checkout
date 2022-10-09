@@ -62,15 +62,6 @@
       >
       <span class="output__message">К оплате: {{ store.totalPrice }} ₽</span>
     </section>
-    <!-- <label class="main__checkbox-container"> -->
-    <!-- <v-app>
-      <v-checkbox class="main__checkbox" v-model="checkbox">
-        <template v-slot:label>
-          <span class="main__checkbox-label">Регистрация на обратный рейс</span>
-        </template>
-      </v-checkbox>
-    </v-app> -->
-    <!-- </label> -->
     <v-app>
       <BaseButton
         class="main__button"
@@ -78,9 +69,6 @@
         :status="'primary'"
       />
     </v-app>
-    <!-- <button class="main__button button button__primary"> -->
-    <!-- Зарегистрироваться -->
-    <!-- </button> -->
   </div>
 </template>
 
@@ -119,60 +107,6 @@ export default {
     };
   },
 };
-
-// data() {
-//   return {
-//     sheet: false,
-//     checkbox: null,
-//     cards: [],
-//     rigetIndex: 0,
-//   };
-// },
-// computed: {
-//   ...mapState(useUsers, ["persons"]),
-//   ...mapWritableState(useUsers, ["basePersonEmail"]),
-// },
-// methods: {
-//   createCard(
-//     passengerName = "",
-//     numberTickets = "",
-//     mapSeats,
-//     id = nanoid(5)
-//   ) {
-//     const existCard = this.cards.find(
-//       (card) => card.numberTickets === numberTickets
-//     );
-//     if (!existCard)
-//       this.cards.push({
-//         passengerName,
-//         numberTickets,
-//         mapSeats,
-//         id,
-//       });
-//   },
-//   removeCard(id) {
-//     const index = this.cards.findIndex((currentTic) => currentTic.id === id);
-//     this.cards.splice(index, 1);
-//   },
-// },
-// watch: {
-//   persons: {
-//     handler(val) {
-//       console.log(val);
-//       if (val) {
-//         // this.cards = [];
-//         val.forEach((currentPerson) =>
-//           this.createCard(
-//             currentPerson.lastName,
-//             currentPerson.ticketNumber,
-//             currentPerson.mapSeats
-//           )
-//         );
-//       }
-//     },
-//     immediate: true,
-//   },
-// },
 </script>
 
 <style lang="scss" scoped>
