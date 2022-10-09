@@ -1,160 +1,191 @@
 <template>
   <article class="card">
-    <button @click="removeCard()" class="card__cancel"></button>
-    <form action="#">
-      <label
-        ><span class="card__label">Фамилия, как указана в билете</span></label
-      >
-      <!-- <v-text-field label="First Name" outlined shaped></v-text-field> -->
-      <v-text-field
-        v-model="passengerName"
-        label="Номер билета, брони или паспорта"
-        single-line
-        outlined
-        hint="Номер билета, брони или паспорта"
-      ></v-text-field>
-      <label
-        ><span class="card__label"
-          >Номер билета, брони или паспорта</span
-        ></label
-      >
-
-      <v-text-field
-        label="Номер билета, брони или паспорта"
-        v-model="numberTickets"
-        filled
-        shaped
-      ></v-text-field>
-
-      <div class="card__notification">
+    <button @click="removeCard" class="card__cancel"></button>
+    <v-app>
+      <label>
+        <span class="card__label">Фамилия, как указана в билете</span>
+        <v-text-field
+          v-model="lastName"
+          placeholder="IVANOV"
+          style="border-radius: 50px"
+          required
+          outlined
+          color="#07237E"
+          :rules="[() => !!lastName || 'Это поле обязательно']"
+        ></v-text-field>
+      </label>
+      <label class="card__container-ticket">
+        <span class="card__label"> Номер билета, брони или паспорта </span>
+        <v-text-field
+          v-model="ticketNumber"
+          placeholder="1234567891234"
+          style="border-radius: 50px"
+          required
+          outlined
+          :persistent-hint="$vuetify.breakpoint.width <= 450"
+          color="#07237E"
+          hint='<div class="card__notification">
         <span class="card__notification-message"
           >Номер билета из 13 цифр. Пример: 5550123456789</span
         ><br /><span class="card__notification-message"
           >Номер брони из 6 символов. Пример: XZKLDR</span
         >
+      </div> '
+          :rules="[() => !!ticketNumber || 'Это поле обязательно']"
+        >
+          <template v-slot:message="{ message }">
+            <span v-html="message"></span>
+          </template>
+        </v-text-field>
+      </label>
+      <div class="card__place">
+        <span class="card__label">Место</span>
+        <v-text-field
+          v-if="chosenSeat"
+          style="border-radius: 50px; margin-right: 15px"
+          placeholder="Место"
+          :value="chosenSeat"
+          class="card__place-input"
+          required
+          outlined
+          disabled
+          hide-details
+        ></v-text-field>
+        <BaseButton
+          :class="'card__button'"
+          :text="'Выбрать'"
+          :status="'primary'"
+          :loading="loadingBtn"
+          @click="openCardMap"
+        />
       </div>
-      <!-- <label><span class="card__label">Пожелания по салону</span></label> -->
-      <label><span class="card__label">Место</span></label>
-      <v-text-field
-        label="Место"
-        v-model="seat"
-        single-line
-        outlined
-        hint="Место"
-      ></v-text-field>
-      <v-bottom-sheet v-model="sheet" inset max-width="960">
-        <template v-slot:activator="{}">
-          <BaseButton
-            :text="'Выбрать'"
-            :status="'primary'"
-            @click="sheet = true"
-          />
-        </template>
-        <div class="card-map">
-          <div class="card-map__left-side">
-            <span class="card-map__description"
-              >Выберите место для пассажиров:</span
-            >
-            <ul class="card-map__list">
-              <li class="card-map__item">
-                <button class="card-map__item-button">
-                  <strong class="card-map__item-name">Виталий Колесник</strong>
-                  <span class="card-map__item-status">Место не выбрано</span>
-                </button>
-              </li>
-              <li class="card-map__item card-map__item--selected">
-                <button class="card-map__item-button">
-                  <strong class="card-map__item-name"
-                    >Наталья Чемерисова</strong
-                  >
-                  <span class="card-map__item-status">Место не выбрано</span>
-                </button>
-              </li>
-              <li class="card-map__item card-map__item--success">
-                <button class="card-map__item-button">
-                  <strong class="card-map__item-name">Олег Игнатов</strong>
-                  <span class="card-map__item-status"
-                    >место 14С за 129 000 ₽</span
-                  >
-                </button>
-              </li>
-            </ul>
-            <div class="card-map__group-button">
-              <button class="button button__primary card-map__button">
-                Продолжить выбор мест
-              </button>
-              <button class="card-map__cancel">Отменить</button>
-            </div>
-          </div>
-          <div class="card-map__right-side">
-            <MapSeats :map-seats="mapSeats" />
-          </div>
-          <div class="card-map__group-button mobile-buttons">
-            <button class="button button__primary card-map__button">
-              Продолжить выбор мест
-            </button>
-            <button class="card-map__cancel">Отменить</button>
-          </div>
-        </div>
-      </v-bottom-sheet>
-    </form>
+    </v-app>
   </article>
 </template>
 
 <script>
+import { watch } from "vue";
 import BaseButton from "@/components/BaseButton.vue";
-import MapSeats from "@/components/MapSeats.vue";
+import useCardPassenger from "@/hooks/useCardPassenger";
 export default {
-  components: { BaseButton, MapSeats },
+  components: { BaseButton },
   props: {
     card: {
       type: Object,
       required: true,
     },
-    mapSeats: {
-      type: Array,
-      required: true,
-    },
   },
-  data() {
+  emit: ["openCardMap"],
+  setup(props, { emit }) {
+    const {
+      lastName,
+      ticketNumber,
+      mapSeats,
+      chosenSeat,
+      loadingBtn,
+      openCardMap,
+      id,
+      store,
+      removeCard,
+    } = useCardPassenger(emit);
+
+    watch(lastName, () => {
+      emit("update:card", {
+        lastName: lastName.value,
+        ticketNumber: ticketNumber.value,
+      });
+    });
+
+    watch(ticketNumber, () => {
+      emit("update:card", {
+        lastName: lastName.value,
+        ticketNumber: ticketNumber.value,
+      });
+    });
+
+    watch(
+      () => props.card,
+      (val) => {
+        lastName.value = val.lastName;
+        ticketNumber.value = val.ticketNumber;
+        mapSeats.value = val.mapSeats;
+        id.value = val.id;
+      },
+      { immediate: true }
+    );
+
+    watch(
+      () => store.persons,
+      () => {
+        const p = store.findPersonByTicket(ticketNumber.value);
+        if (p) {
+          chosenSeat.value = p.normalSeat;
+        }
+      }
+    );
+
     return {
-      sheet: false,
-      passengerName: null,
-      numberTickets: null,
-      seat: null,
-      id: null,
+      lastName,
+      ticketNumber,
+      mapSeats,
+      chosenSeat,
+      loadingBtn,
+      openCardMap,
+      removeCard,
     };
-  },
-  methods: {
-    removeCard() {
-      this.$emit("removeCard", this.id);
-    },
-  },
-  watch: {
-    card: {
-      handler(val) {
-        this.passengerName = val.passengerName;
-        this.numberTickets = val.numberTickets;
-        this.id = val.id;
-      },
-      immediate: true,
-    },
-    passengerName: {
-      handler() {
-        this.$emit("update:card", {
-          passengerName: this.passengerName,
-          numberTickets: this.numberTickets,
-        });
-      },
-    },
-    numberTickets: {
-      handler() {
-        this.$emit("update:card", {
-          passengerName: this.passengerName,
-          numberTickets: this.numberTickets,
-        });
-      },
-    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.theme--light.v-application {
+  background: transparent;
+}
+
+.card__label {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.v-text-field__details {
+  @media (max-width: 445px) {
+    padding: 0;
+  }
+}
+
+.card__notification {
+  @media (max-width: 445px) {
+    height: 80px;
+  }
+}
+
+.card__container-ticket {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card__button {
+  width: 158px;
+
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  & .v-btn__content {
+    font-size: 18px;
+  }
+}
+
+.card__place {
+  display: flex;
+  flex-wrap: wrap;
+
+  &-input {
+    @media (max-width: 500px) {
+      width: 100px;
+    }
+  }
+}
+</style>

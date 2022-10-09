@@ -5,37 +5,25 @@
         <v-skeleton-loader type="heading"></v-skeleton-loader>
       </div>
       <div class="container main__sceleton">
-        <v-skeleton-loader type="card@2"></v-skeleton-loader>
+        <v-skeleton-loader
+          class="main__sceleton-card"
+          type="heading, chip, heading, chip, button"
+        ></v-skeleton-loader>
       </div>
     </div>
-    <PassengerList
-      v-else
-      :passenger-card="passengerCard"
-      :map-seats="mapSeats"
-    />
-    <CardMap style="display: none" />
+    <PassengerList v-else />
   </main>
 </template>
 
 <script>
 import PassengerList from "@/components/PassengerList.vue";
-import CardMap from "@/components/CardMap.vue";
-// import { Fragment } from "vue-fragment";
-// import MainHeader from "@/components/MainHeader.vue";
-// import MainFooter from "@/components/MainFooter.vue";
 
 export default {
-  components: { CardMap, PassengerList },
+  components: { PassengerList },
   props: {
     preloader: {
       type: Boolean,
       default: true,
-    },
-    passengerCard: {
-      type: Object,
-    },
-    mapSeats: {
-      type: Array,
     },
   },
   data() {
@@ -56,10 +44,31 @@ export default {
       width: 40%;
     }
 
-    & .v-skeleton-loader__card {
-      display: inline-block;
-      width: calc(100% / 2 - 16px);
+    &-card {
+      display: flex;
+      flex-direction: column;
+      max-width: 495px;
+      min-height: 400px;
+      width: 100%;
+      padding: 32px;
       border-radius: 10px;
+      background-color: white;
+
+      & .v-skeleton-loader__heading {
+        width: 60%;
+        margin-bottom: 5px;
+      }
+
+      & .v-skeleton-loader__chip {
+        width: 100%;
+        height: 40px;
+      }
+
+      & .v-skeleton-loader__button {
+        border-radius: 50px;
+        width: 35%;
+        height: 56px;
+      }
     }
 
     & .v-skeleton-loader {

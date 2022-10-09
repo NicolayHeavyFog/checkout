@@ -24,3 +24,7 @@ export function comparisonTime(timeOne) {
 
   return isAfter(new Date(a), d);
 }
+
+export function numberFormat(value) {
+  return new Intl.NumberFormat().format(value);
+}
