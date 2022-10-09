@@ -5,13 +5,21 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "generate-icons": "vsvg -s ./svg-icons -t ./src/compiled-icons"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
-    "vue": "^2.6.14",
-    "vue-router": "^3.6.5",
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "nanoid": "^4.0.0",
+    "pinia": "^2.0.22",
+    "process": "^0.11.10",
+    "vue": "^2.7.10",
+    "vue-fragment": "^1.6.0",
+    "vue-router": "^3.5.1",
+    "vue2-teleport": "^1.0.1",
     "vuetify": "^2.6.0"
   },
   "devDependencies": {
@@ -19,6 +27,7 @@
     "@babel/eslint-parser": "^7.12.16",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
@@ -29,6 +38,7 @@
     "sass": "~1.32.0",
     "sass-loader": "^13.0.2",
     "vue-cli-plugin-vuetify": "~2.5.8",
+    "vue-svgicon": "^3.2.9",
     "vue-template-compiler": "^2.6.14",
     "vuetify-loader": "^1.7.0"
   }
