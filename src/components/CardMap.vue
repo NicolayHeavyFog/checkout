@@ -113,11 +113,7 @@
 </template>
 
 <script>
-// import { mapWritableState, mapActions } from "pinia";
-// import { bus } from "@/main";
-// import { ref, watch, computed, onMounted } from "vue";
 import MapSeats from "@/components/MapSeats.vue";
-// import { useUsers } from "@/store/users";
 import { numberFormat } from "@/helpers";
 import useCardMap from "@/hooks/useCardMap";
 import { ref, onMounted, watch } from "vue";
@@ -127,7 +123,6 @@ export default {
 
   setup() {
     const currentSeatsMap = ref(null);
-    // const currentTicket = ref(null);
     const items = ref(null);
     const {
       currentPerson,
@@ -184,12 +179,6 @@ export default {
       currentSeatsMap.value = val.mapSeats;
     });
 
-    // watch(currentTicket, (val) => {
-    //   currentPerson.value = store.persons.find(
-    //     (p) => Number(p.ticketNumber) === Number(val)
-    //   );
-    // });
-
     watch(
       activeButtonElements,
       (val) => {
@@ -202,21 +191,10 @@ export default {
       { deep: true }
     );
 
-    // watch(
-    //   () => store.persons,
-    //   () => {
-    //     console.log(store.persons);
-    //     console.log("dsfd");
-    //   },
-    //   { deep: true }
-    // );
-
     onMounted(() => {
       currentIndexPerson.value = 0;
       currentPerson.value = store.persons[currentIndexPerson.value];
       currentPerson.value.active = true;
-      // if ($vuetify.breakpoint.width < 900)
-      //   items.value[0].classList.add("card-map__item--selected");
     });
 
     return {
@@ -237,168 +215,6 @@ export default {
       items,
     };
   },
-  // data() {
-  //   return {
-  //     currentPerson: null,
-  //     currentIndexPerson: null,
-  //     currentSeatsMap: null,
-  //     persons: [],
-  //     rigedIndex: 0,
-  //     rigedIndex2: 0,
-  //     activeButtonElements: [],
-  //     snackbar: false,
-  //     snackbarText: null,
-  //     store: useUsers(),
-  //   };
-  // },
-  // computed: {
-  //   ...mapWritableState(useUsers, {
-  //     p: "persons",
-  //   }),
-  //   items() {
-  //     return this.$refs.items;
-  //   },
-  // },
-  // methods: {
-  //   // numberFormat,
-  //   // ...mapActions(useUsers, ["updatePerson"]),
-  //   // setSeatCurrentPerson({
-  //   //   indexCurrentPerson,
-  //   //   indexElement,
-  //   //   rate: seatRate,
-  //   //   seat,
-  //   // }) {
-  //   //   const otherPersonWithSameSeat = this.persons.find((p, i) => {
-  //   //     return p.normalSeat === seat && i !== indexCurrentPerson;
-  //   //   });
-  //   //   if (!otherPersonWithSameSeat) {
-  //   //     this.persons[indexCurrentPerson].normalSeat = seat;
-  //   //     this.persons[indexCurrentPerson].seatRate = seatRate;
-  //   //     this.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
-  //   //     this.p[indexCurrentPerson].seatRate = seatRate;
-  //   //     bus.$emit("setSeat", {
-  //   //       ticketNumber: this.persons[indexCurrentPerson].ticketNumber,
-  //   //       seat: seat,
-  //   //     });
-  //   //     this.updateActivePerson(indexCurrentPerson);
-  //   //     setTimeout(() => {
-  //   //       const activeSelectedSeat = document
-  //   //         .querySelector(`.card-map__map-seat[data-index="${indexElement}"]`)
-  //   //         .querySelector(".card-map__map-button");
-  //   //       const letter = this.persons[indexCurrentPerson].lastName[0];
-  //   //       const currentPerson = this.activeButtonElements.find(
-  //   //         (li) => li?.personIndex === indexCurrentPerson
-  //   //       );
-  //   //       const className =
-  //   //         currentPerson?.activeClass || "selected-active-" + nanoid(5);
-  //   //       activeSelectedSeat.setAttribute("data-letter", letter);
-  //   //       const indicator = activeSelectedSeat.classList.toggle(className);
-  //   //       if (!indicator) {
-  //   //         this.persons[indexCurrentPerson].normalSeat = null;
-  //   //         this.persons[indexCurrentPerson].seatRate = null;
-  //   //         this.rigedIndex2++;
-  //   //       }
-  //   //       const newActiveLiElement = {
-  //   //         personIndex: indexCurrentPerson,
-  //   //         activeLi: activeSelectedSeat,
-  //   //         lastActiveLi: currentPerson?.activeLi,
-  //   //         activeClass: className,
-  //   //         activeIndex: indexElement,
-  //   //         lastActiveIndex: currentPerson?.activeIndex,
-  //   //       };
-  //   //       const i = this.activeButtonElements.findIndex(
-  //   //         (li) => li?.personIndex === indexCurrentPerson
-  //   //       );
-  //   //       if (i !== -1) this.activeButtonElements.splice(i, 1);
-  //   //       this.activeButtonElements.push(newActiveLiElement);
-  //   //       this.rigedIndex++;
-  //   //     }, 0);
-  //   //   } else {
-  //   //     this.snackbarText = "Это место уже выбрано!";
-  //   //     this.snackbar = true;
-  //   //   }
-  //   // },
-  //   // setNextPerson() {
-  //   //   if (this.currentIndexPerson === this.persons.length - 1) {
-  //   //     this.currentIndexPerson = 0;
-  //   //   } else {
-  //   //     this.currentIndexPerson++;
-  //   //   }
-  //   //   this.currentPerson = this.persons[this.currentIndexPerson];
-  //   //   this.updateActivePerson(this.currentIndexPerson);
-  //   //   this.rigedIndex++;
-  //   // },
-  //   // updateGlobalState(indexPerson, newDate) {
-  //   //   this.p[indexPerson] = { ...this.p[indexPerson], ...newDate };
-  //   // },
-  //   // setPerson(index) {
-  //   //   this.setClassSelected(index);
-  //   //   this.persons.forEach((p, i) => {
-  //   //     if (i === index) {
-  //   //       p.active = true;
-  //   //       this.currentPerson = p;
-  //   //     } else p.active = false;
-  //   //   });
-  //   // },
-  //   // setClassSelected(index) {
-  //   //   this.items.forEach((btn) =>
-  //   //     btn.classList.remove("card-map__item--selected")
-  //   //   );
-  //   //   document
-  //   //     .querySelector(`.card-map__item[data-index="${index}"]`)
-  //   //     .classList.add("card-map__item--selected");
-  //   // },
-  //   // setClassSuccess(person) {
-  //   //   let cls = "";
-  //   //   if (person.active) cls += "card-map__item--selected ";
-  //   //   if (
-  //   //     this.persons.find((currentPerson) => {
-  //   //       if (
-  //   //         currentPerson?.normalSeat &&
-  //   //         currentPerson.ticketNumber === person.ticketNumber
-  //   //       )
-  //   //         return currentPerson;
-  //   //     })
-  //   //   ) {
-  //   //     cls += "card-map__item--success ";
-  //   //   }
-  //   //   return cls;
-  //   // },
-  //   // updateActivePerson(index) {
-  //   //   this.persons.forEach((p, i) => {
-  //   //     if (i === index) {
-  //   //       p.active = true;
-  //   //     } else p.active = false;
-  //   //   });
-  //   // },
-  // },
-  // watch: {
-  // currentPerson: {
-  //   handler(val) {
-  //     this.currentSeatsMap = val.mapSeats;
-  //   },
-  // },
-  // activeButtonElements: {
-  //   handler(val) {
-  //     val.forEach((btn) => {
-  //       if (btn?.lastActiveLi !== btn.activeLi && btn?.lastActiveLi) {
-  //         btn.lastActiveLi.classList.remove(btn.activeClass);
-  //       }
-  //     });
-  //   },
-  //   deep: true,
-  // },
-  // },
-  // created() {
-  //   this.persons = this.p;
-  //   this.currentIndexPerson = 0;
-  //   this.currentPerson = this.persons[this.currentIndexPerson];
-  //   this.currentPerson.active = true;
-  // },
-  // mounted() {
-  //   if (this.$vuetify.breakpoint.width > 900)
-  //     this.$refs.items[0].classList.add("card-map__item--selected");
-  // },
 };
 </script>
 

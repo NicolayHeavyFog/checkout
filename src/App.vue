@@ -204,7 +204,7 @@ export default {
       } catch (err) {
         console.log(err);
         this.fetchStatus.success = false;
-        this.fetchStatus.loading = false;
+        this.fetchStatus.loading = true;
       }
     },
   },
