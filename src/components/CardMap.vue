@@ -11,8 +11,18 @@
           :class="setClassSuccess(person)"
           ref="items"
         >
+          <div
+            v-if="loadingLi.indexPerson === index && loadingLi.status"
+            class="card-map__item-button"
+          >
+            <v-progress-circular
+              indeterminate
+              size="40"
+              :color="BLUE"
+            ></v-progress-circular>
+          </div>
           <button
-            v-if="!loadingLi"
+            v-else
             class="card-map__item-button"
             @click="setPerson(index)"
           >
@@ -27,13 +37,6 @@
                 : "Место не выбрано"
             }}</span>
           </button>
-          <div v-else class="card-map__item-button">
-            <v-progress-circular
-              indeterminate
-              size="40"
-              :color="BLUE"
-            ></v-progress-circular>
-          </div>
         </li>
       </ul>
 
