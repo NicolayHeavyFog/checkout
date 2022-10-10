@@ -41,9 +41,6 @@
         <td>
           <aside>
             <ul class="card-map__price-list">
-              <li class="card-map__price-item free">
-                <span>Свободно</span>
-              </li>
               <li class="card-map__price-item chosen">
                 <span>Выбрано</span>
               </li>
@@ -206,15 +203,23 @@ export default {
 
 .card-map__price {
   &-list {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(4, 1fr);
     list-style-type: none;
-    flex-wrap: wrap;
+    justify-items: center;
     margin: 0;
     padding: 0;
     gap: 5px;
   }
   &-item {
+    &:nth-child(2),
+    &:nth-child(1) {
+      grid-column: span 2;
+      width: 100%;
+      text-align: center;
+    }
+
     &::before {
       content: "";
       display: inline-block;

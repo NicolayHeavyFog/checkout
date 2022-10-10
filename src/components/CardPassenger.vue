@@ -1,6 +1,10 @@
 <template>
   <article class="card">
-    <button @click="removeCard" class="card__cancel"></button>
+    <button
+      v-if="!undeletable"
+      @click="removeCard"
+      class="card__cancel"
+    ></button>
     <v-app>
       <label>
         <span class="card__label">Фамилия, как указана в билете</span>
@@ -11,7 +15,10 @@
           required
           outlined
           color="#07237E"
-          :rules="[() => !!lastName || 'Это поле обязательно']"
+          :rules="[
+            () => !!lastName || 'Это поле обязательно',
+            (value) => (value && value.length >= 3) || 'Имя минимум 3 символа',
+          ]"
         ></v-text-field>
       </label>
       <label class="card__container-ticket">
@@ -39,7 +46,7 @@
         </v-text-field>
       </label>
       <div class="card__place">
-        <span class="card__label">Место</span>
+        <!-- <span class="card__label">Место</span> -->
         <v-text-field
           v-if="chosenSeat"
           style="border-radius: 50px; margin-right: 15px"
@@ -53,7 +60,8 @@
         ></v-text-field>
         <BaseButton
           :class="'card__button'"
-          :text="'Выбрать'"
+          :text="textButton"
+          :disabled="!lastName || !ticketNumber"
           :status="'primary'"
           :loading="loadingBtn"
           @click="openCardMap"
@@ -64,12 +72,16 @@
 </template>
 
 <script>
-import { watch } from "vue";
+import { onMounted, watch } from "vue";
 import BaseButton from "@/components/BaseButton.vue";
 import useCardPassenger from "@/hooks/useCardPassenger";
 export default {
   components: { BaseButton },
   props: {
+    undeletable: {
+      type: Boolean,
+      default: false,
+    },
     card: {
       type: Object,
       required: true,
@@ -87,6 +99,7 @@ export default {
       id,
       store,
       removeCard,
+      textButton,
     } = useCardPassenger(emit);
 
     watch(lastName, () => {
@@ -94,6 +107,8 @@ export default {
         lastName: lastName.value,
         ticketNumber: ticketNumber.value,
       });
+      // textButton.value =
+      //   chosenSeat.value === null ? "Выбрать место" : "Изменить";
     });
 
     watch(ticketNumber, () => {
@@ -101,6 +116,8 @@ export default {
         lastName: lastName.value,
         ticketNumber: ticketNumber.value,
       });
+      // textButton.value =
+      //   chosenSeat.value === null ? "Выбрать место" : "Изменить";
     });
 
     watch(
@@ -120,9 +137,15 @@ export default {
         const p = store.findPersonByTicket(ticketNumber.value);
         if (p) {
           chosenSeat.value = p.normalSeat;
+          textButton.value =
+            chosenSeat.value === null ? "Выбрать место" : "Изменить";
         }
       }
     );
+
+    onMounted(() => {
+      textButton.value = props.undeletable ? "Выбрать место" : "Добавить";
+    });
 
     return {
       lastName,
@@ -132,6 +155,7 @@ export default {
       loadingBtn,
       openCardMap,
       removeCard,
+      textButton,
     };
   },
 };

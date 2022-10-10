@@ -10,6 +10,8 @@ export default function useCardMap() {
   const snackbar = ref(false);
   const snackbarText = ref(null);
   const store = useUsers();
+  const loadingSelect = ref(false);
+  const loadingLi = ref(false);
 
   function updateActivePerson(index) {
     store.persons.forEach((p, i) => {
@@ -19,7 +21,7 @@ export default function useCardMap() {
     });
   }
 
-  function setSeatCurrentPerson({
+  async function setSeatCurrentPerson({
     indexCurrentPerson,
     indexElement,
     rate: seatRate,
@@ -28,7 +30,20 @@ export default function useCardMap() {
     const otherPersonWithSameSeat = store.persons.find((p, i) => {
       return p.normalSeat === seat && i !== indexCurrentPerson;
     });
+
     if (!otherPersonWithSameSeat) {
+      loadingSelect.value = true;
+      loadingLi.value = true;
+      const response = await store
+        .checkAvailableSeat(
+          store.persons[indexCurrentPerson].ticketNumber,
+          seat
+        )
+        .then(() => {
+          loadingSelect.value = false;
+          loadingLi.value = false;
+        });
+      console.log(response);
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
       updateActivePerson(indexCurrentPerson);
       // currentPerson.value = store.persons[indexCurrentPerson];
@@ -95,6 +110,8 @@ export default function useCardMap() {
     activeButtonElements,
     snackbar,
     snackbarText,
+    loadingSelect,
+    loadingLi,
 
     store,
 

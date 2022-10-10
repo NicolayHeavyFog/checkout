@@ -106,6 +106,7 @@ export default {
     margin-bottom: 50px;
     height: 30px;
     width: 80%;
+    border-radius: 40px;
   }
 
   & .v-skeleton-loader__paragraph {
@@ -115,6 +116,7 @@ export default {
   & .v-skeleton-loader__chip {
     width: 256px;
     height: 40px;
+    border-radius: 40px;
     transform: translate(0, 80px);
   }
 
@@ -129,6 +131,7 @@ export default {
 
     & .v-skeleton-loader__text {
       height: 25px;
+      border-radius: 40px;
     }
   }
 }

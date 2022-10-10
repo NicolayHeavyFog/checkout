@@ -28,3 +28,11 @@ export function comparisonTime(timeOne) {
 export function numberFormat(value) {
   return new Intl.NumberFormat().format(value);
 }
+
+export function scrollTo(element) {
+  window.scroll({
+    left: 0,
+    top: element.offsetTop - 300,
+    behavior: "smooth",
+  });
+}

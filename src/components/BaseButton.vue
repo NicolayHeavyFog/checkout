@@ -7,6 +7,7 @@
     rounded
     :color="color"
     :loading="loading"
+    :disabled="disabled"
     >{{ text }}</v-btn
   >
 </template>
@@ -21,6 +22,10 @@ export default {
     },
     text: {
       type: String,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     status: {
       type: String,
@@ -42,10 +47,6 @@ export default {
       return this.status === "primary"
         ? "button button__primary"
         : "button button__secondary";
-
-      // return this.status === "primary"
-      //   ? "color: white; font-weight: 500; font-size: 18px"
-      //   : `color: ${this.color}; background-color: white; font-weight: 700`;
     },
   },
   methods: {

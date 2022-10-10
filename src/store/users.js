@@ -20,6 +20,13 @@ export const useUsers = defineStore("users", {
     },
   }),
   getters: {
+    checkSeats() {
+      let result = true;
+      this.persons.forEach((p) => {
+        if (!p?.normalSeat) result = false;
+      });
+      return result;
+    },
     totalPrice() {
       return (
         this.persons.reduce((acc, cp) => {
@@ -52,6 +59,33 @@ export const useUsers = defineStore("users", {
       this.$patch({
         persons: persons,
       });
+    },
+    async checkAvailableSeat(ticketNumber, seat) {
+      const p = this.findPersonByTicket(ticketNumber);
+      const payload = {
+        airline: this.airline.iata_code,
+        passengers: [
+          {
+            seatNumber: seat,
+            lastName: p.lastName,
+            ticketNumber: p.ticketNumber,
+            segmentsGroupIndex: p.segmentsGroupIndex || 0,
+            segmentIndex: p.segmentIndex || 0,
+          },
+        ],
+      };
+      try {
+        return (
+          await api.passenger.infoDetailed({ type: "getSeat", ...payload })
+        ).data[0];
+      } catch ({ response }) {
+        this.notification = {
+          type: "error",
+          availableReload: false,
+          textMessage: response.data.error,
+        };
+        return response;
+      }
     },
     async getPerson(id) {
       try {

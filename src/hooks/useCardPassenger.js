@@ -5,17 +5,19 @@ export default function useCardPassenger(emit) {
   const store = useUsers();
   const lastName = ref("");
   const ticketNumber = ref("");
+  const textButton = ref("Добавить");
   const mapSeats = ref(null);
   const chosenSeat = ref(null);
   const id = ref(null);
   const loadingBtn = ref(false);
 
   async function openCardMap() {
-    const p = store.persons.find(
-      (_) =>
-        _.ticketNumber === ticketNumber.value && lastName.value === _.lastName
-    );
-    if (p) {
+    const p = store.findPersonByTicket(ticketNumber.value);
+    // const p = store.persons.find(
+    //   (_) =>
+    //     _.ticketNumber === ticketNumber.value && lastName.value === _.lastName
+    // );
+    if (p?.mapSeats) {
       emit("openCardMap");
     } else {
       loadingBtn.value = true;
@@ -25,7 +27,7 @@ export default function useCardPassenger(emit) {
         ticketNumber: ticketNumber.value,
       });
       loadingBtn.value = false;
-      openCardMap();
+      textButton.value = "Выбрать место";
     }
   }
 
@@ -43,5 +45,6 @@ export default function useCardPassenger(emit) {
     store,
     openCardMap,
     removeCard,
+    textButton,
   };
 }
