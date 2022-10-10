@@ -53,10 +53,9 @@
         absolute
         x-large
         class="button button__secondary header__button"
+        v-if="segments"
       >
-        <!-- <button class="button button__secondary header__button"> -->
         Изменить данные рейса
-        <!-- </button> -->
       </v-btn>
     </div>
   </header>
@@ -64,6 +63,8 @@
 
 <script>
 import { convertTime } from "@/helpers";
+import { mapState } from "pinia";
+import { useUsers } from "@/store/users";
 export default {
   props: {
     preloader: {
@@ -76,6 +77,9 @@ export default {
   },
   data() {
     return {};
+  },
+  computed: {
+    ...mapState(useUsers, ["segments"]),
   },
   methods: {
     convertTime,

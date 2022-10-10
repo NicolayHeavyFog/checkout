@@ -6,6 +6,7 @@
     elevation="0"
     rounded
     :color="color"
+    :loading="loading"
     >{{ text }}</v-btn
   >
 </template>
@@ -24,6 +25,10 @@ export default {
     status: {
       type: String,
       default: "primary",
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

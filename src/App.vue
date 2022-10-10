@@ -5,12 +5,8 @@
       :info="headerInfo"
       @change-flight="changeFlight()"
     />
-    <MainPage
-      :preloader="fetchStatus.loading"
-      :passenger-card="data"
-      :map-seats="mapSeats"
-    />
-    <MainFooter v-if="webCheckInOpen" />
+    <MainPage :preloader="fetchStatus.loading" />
+    <MainFooter v-if="!fetchStatus.loading" />
     <v-app>
       <v-dialog v-model="dialog" persistent max-width="809">
         <v-card class="suggestion">
@@ -87,18 +83,11 @@
           </div>
         </v-card>
       </v-dialog>
-      <div class="popup">
-        <v-alert prominent type="error" v-if="!fetchStatus.success">
-          Билет не найден
-          <v-btn @click="fetch()">Повторить запрос</v-btn>
-        </v-alert>
-        <!-- <v-alert border="top" colored-border type="info" elevation="2">
-          Vestibulum ullamcorper mauris at ligula. Nam pretium turpis et arcu.
-          Ut varius tincidunt libero. Curabitur ligula sapien, tincidunt non,
-          euismod vitae, posuere imperdiet, leo. Morbi nec metus.
-        </v-alert> -->
-      </div>
+      <v-app>
+        <div id="teleport-target"></div>
+      </v-app>
     </v-app>
+    <BaseNotification @reload="fetch()" />
   </div>
 </template>
 
@@ -106,32 +95,51 @@
 import { convertTime, comparisonTime } from "@/helpers";
 import MainHeader from "@/components/MainHeader.vue";
 import MainFooter from "@/components/MainFooter.vue";
-// import BasePopup from "@/components/BasePopup.vue";
 import MainPage from "@/views/MainPage.vue";
-import api from "@/api/index.js";
+import BaseNotification from "@/components/BaseNotification.vue";
 import BaseButton from "@/components/BaseButton.vue";
-// import axios from "axios";
+import { mapActions, mapWritableState } from "pinia";
+import { useUsers } from "@/store/users";
 
 export default {
   name: "App",
-  components: { MainHeader, MainFooter, MainPage, BaseButton },
+  components: {
+    MainHeader,
+    MainFooter,
+    MainPage,
+    BaseButton,
+    BaseNotification,
+  },
+
   data() {
     return {
       radioGroup: 0,
       dialog: false,
-      data: null,
-      segments: null,
-      segmentsData: null,
-      fullData: null,
-      webCheckInOpen: null,
-      mapSeats: null,
-      fetchStatus: {
-        success: true,
-        loading: true,
-      },
-      airline: null,
-      headerInfo: {},
+      flightInfo: null,
     };
+  },
+  computed: {
+    ...mapWritableState(useUsers, [
+      "fetchStatus",
+      "basePerson",
+      "segments",
+      "airline",
+      "persons",
+    ]),
+    headerInfo() {
+      return {
+        departureDateTime: this.flightInfo?.departureDateTime,
+        arrivalDateTime: this.flightInfo?.arrivalDateTime,
+        flightCode: this.basePerson?.flight?.full_flight_number,
+        arrivalCity: this.flightInfo?.arrivalCity,
+        arrivalCityCode: this.flightInfo?.arrivalCityCode,
+        departureCity: this.flightInfo?.departureCity,
+        departureCityCode: this.flightInfo?.departureCityCode,
+        webCheckInClose: this.flightInfo?.stages?.webCheckInClose,
+        webCheckInOpen: this.flightInfo?.stages?.webCheckInOpen,
+        status: this.flightInfo?.status,
+      };
+    },
   },
   methods: {
     convertTime,
@@ -139,228 +147,69 @@ export default {
     changeFlight() {
       this.dialog = true;
     },
-    async getPerson() {
-      const id = this.$route.query.id;
-      try {
-        this.data = (await api.passenger.info(id)).data;
-      } catch (err) {
-        console.log("Ошибка получения информации о человеке");
-        this.fetchStatus.success = false;
-      }
-    },
-    async getAirline() {
-      try {
-        this.airline = (await api.passenger.airline(this.data.airline)).data;
-      } catch (err) {
-        console.log("Ошибка получения подробностей об авиокомпании");
-        this.fetchStatus.success = false;
-      }
-    },
-    async getSegments() {
-      try {
-        await this.getPerson();
-        await this.getAirline();
-        const payload = {
-          airline: this.airline.iata_code,
-          passengers: [
-            {
-              lastName: this.data.last_name,
-              ticketNumber: this.data.ticket_number,
-            },
-          ],
-        };
-        this.segmentsData = (
-          await api.passenger.infoDetailed({ type: "ticketsInfo", ...payload })
-        ).data[0];
-        this.fetchStatus.success = true;
-      } catch (err) {
-        this.fetchStatus.success = false;
-      }
-    },
-    processingSegments() {
-      this.segments =
-        this.segmentsData.selectSegmentsGroupCase.segmentGroups.map(
-          (currentSegment) => {
-            const seg = currentSegment[0];
-            return {
-              webCheckInOpen: seg.stages.webCheckInOpen,
-              webCheckInClose: seg.stages.webCheckInClose,
-              departureCity: seg.departureCity,
-              arrivalCity: seg.arrivalCity,
-              departureAirport: seg.departureAirport,
-              airline: seg.airline,
-              flightCode: seg.airlineCode + "-" + seg.flightNumber,
-              arrivalDateTime: seg.arrivalDateTime,
-              departureDateTime: seg.departureDateTime,
-              status: seg.status,
-            };
-          }
-        );
-    },
-    async getData() {
-      try {
-        const payload = {
-          airline: this.airline.iata_code,
-          passengers: [
-            {
-              lastName: this.data.last_name,
-              ticketNumber: this.data.ticket_number,
-              segmentIndex: String(this.radioGroup),
-              segmentsGroupIndex: String(this.radioGroup),
-            },
-          ],
-        };
-        const [ticketInfo, mapInfo, seat] = await Promise.all([
-          api.passenger.infoDetailed({ type: "ticketInfo", ...payload }),
-          api.passenger.infoDetailed({ type: "mapInfo", ...payload }),
-          api.passenger.infoDetailed({ type: "getSeat", ...payload }),
-        ]);
+    ...mapActions(useUsers, [
+      "getPerson",
+      "getAirline",
+      "getSegment",
+      "getInfoFlight",
+    ]),
 
-        this.mapSeats = mapInfo.data;
-
-        // console.log(ticketInfo, mapInfo);
-        // if (ticketInfo === "fulfilled") {
-        //   console.log("Информация о билете получена успешно");
-        // } else return new Error("Ошибка в получении билета");
-
-        // if (mapInfo === "fulfilled") {
-        //   console.log("Информация о местах получена успешно");
-        // } else return new Error("Ошибка в получении карты мест");
-        console.log(ticketInfo.data, mapInfo.data, seat.data);
-        const passenger = ticketInfo.data[0].segments[0];
-        // const status = passenger.stages.status;
-        this.headerInfo = {
-          departureDateTime: passenger.departureDateTime,
-          arrivalDateTime: passenger.arrivalDateTime,
-          flightCode: this.data.flight.full_flight_number,
-          arrivalCity: passenger.arrivalCity,
-          arrivalCityCode: passenger.arrivalCityCode,
-          departureCity: passenger.departureCity,
-          departureCityCode: passenger.departureCityCode,
-          webCheckInClose: passenger.stages.webCheckInClose,
-          webCheckInOpen: passenger.stages.webCheckInOpen,
-          status: passenger.status,
-        };
-        // this.webCheckInOpen = passenger.stages.webCheckInOpen;
-
-        if (
-          passenger.status !== "CLOSED" &&
-          passenger.status !== "OPENED" &&
-          passenger.status !== "TAKE_OFF"
-        ) {
-          console.log(passenger.status);
-          this.changeGlobalColor();
+    processingSegments(segmentsData) {
+      this.segments = segmentsData.selectSegmentsGroupCase.segmentGroups.map(
+        (currentSegment) => {
+          const seg = currentSegment[0];
+          return {
+            webCheckInOpen: seg.stages.webCheckInOpen,
+            webCheckInClose: seg.stages.webCheckInClose,
+            departureCity: seg.departureCity,
+            arrivalCity: seg.arrivalCity,
+            departureAirport: seg.departureAirport,
+            airline: seg.airline,
+            flightCode: seg.airlineCode + "-" + seg.flightNumber,
+            arrivalDateTime: seg.arrivalDateTime,
+            departureDateTime: seg.departureDateTime,
+            status: seg.status,
+          };
         }
-        this.fetchStatus.success = true;
-        this.fetchStatus.loading = false;
-      } catch (err) {
-        console.log("Произошла ошибка");
-        this.fetchStatus.success = false;
-      }
+      );
     },
     async setTicket() {
       this.dialog = false;
       this.fetchStatus.loading = true;
-      await this.getData();
+      this.flightInfo = await this.getInfoFlight(
+        {
+          ticketNumber: this.basePerson.ticket_number,
+          lastName: this.basePerson.last_name,
+        },
+        this.radioGroup
+      );
+      this.fetchStatus.loading = false;
     },
 
-    changeGlobalColor() {
-      document.body.classList.remove("blue");
-      document.body.classList.add("green");
-    },
     async fetch() {
-      console.log("fetch");
       try {
-        await this.getSegments();
-        if (this.segmentsData.result === "SELECT_SEGMENTS_GROUP") {
-          this.processingSegments();
+        const id = this.$route.query.id;
+        const segmentsData = await this.getSegment(id);
+        if (segmentsData.result === "SELECT_SEGMENTS_GROUP") {
+          this.processingSegments(segmentsData);
           this.dialog = true;
         } else {
-          await this.getData();
+          this.flightInfo = await this.getInfoFlight({
+            ticketNumber: this.basePerson.ticket_number,
+            lastName: this.basePerson.last_name,
+          });
+          this.fetchStatus.success = true;
+          this.fetchStatus.loading = false;
         }
       } catch (err) {
         console.log(err);
+        this.fetchStatus.success = false;
+        this.fetchStatus.loading = false;
       }
     },
   },
   async created() {
     this.fetch();
-
-    // try {
-    //   await this.getSegments();
-    //   if (this.segmentsData.result === "SELECT_SEGMENTS_GROUP") {
-    //     this.processingSegments();
-    //     this.dialog = true;
-    //   } else {
-    //     await this.getData();
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
-
-    // [
-    //   {
-    //     xCount: 9,
-    //     yCount: 1,
-    //     rows: [
-    //       {
-    //         row_number: "1",
-    //         seats: [
-    //           {
-    //             available: true,
-    //             seatNumber: "1A",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           {
-    //             available: true,
-    //             seatNumber: "1B",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           {
-    //             available: true,
-    //             seatNumber: "1D",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           {
-    //             available: true,
-    //             seatNumber: "1E",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           { available: false, seatNumber: "", exists: false, rate: "" },
-    //           {
-    //             available: true,
-    //             seatNumber: "1F",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           {
-    //             available: false,
-    //             seatNumber: "1J",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //           {
-    //             available: false,
-    //             seatNumber: "1K",
-    //             exists: true,
-    //             rate: 3500,
-    //             currency: "РУБ",
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    // ];
   },
 };
 </script>
@@ -369,7 +218,6 @@ export default {
   & .v-btn__content {
     letter-spacing: 0;
     text-transform: none;
-    font-size: 18px;
   }
 }
 .popup {
@@ -377,6 +225,10 @@ export default {
   top: 30px;
   right: 40px;
   z-index: 10;
+
+  @media (max-width: 735px) {
+    right: 20px;
+  }
 }
 
 .v-application--wrap {
