@@ -8,6 +8,7 @@
           v-for="(card, index) in cards"
           :key="index"
           :card.sync="cards[index]"
+          :undeletable="index === 0"
           @removeCard="removeCard()"
           @openCardMap="sheet = !sheet"
         />
@@ -37,7 +38,7 @@
       </ul>
     </section>
     <section class="mailer">
-      <div class="mailer__win">
+      <div class="mailer__win" id="mail">
         <label
           ><span class="mailer__label"
             >Эл. почта для подтверждение о регистрации</span

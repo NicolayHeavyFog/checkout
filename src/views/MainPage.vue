@@ -62,6 +62,7 @@ export default {
       & .v-skeleton-loader__chip {
         width: 100%;
         height: 40px;
+        border-radius: 40px;
       }
 
       & .v-skeleton-loader__button {
