@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
 
@@ -11,7 +11,10 @@ export default function useCardMap() {
   const snackbarText = ref(null);
   const store = useUsers();
   const loadingSelect = ref(false);
-  const loadingLi = ref(false);
+  const loadingLi = reactive({
+    status: false,
+    indexPerson: null,
+  });
 
   function updateActivePerson(index) {
     store.persons.forEach((p, i) => {
@@ -33,7 +36,8 @@ export default function useCardMap() {
 
     if (!otherPersonWithSameSeat) {
       loadingSelect.value = true;
-      loadingLi.value = true;
+      loadingLi.status = true;
+      loadingLi.indexPerson = indexCurrentPerson;
       const response = await store
         .checkAvailableSeat(
           store.persons[indexCurrentPerson].ticketNumber,
@@ -41,7 +45,9 @@ export default function useCardMap() {
         )
         .then(() => {
           loadingSelect.value = false;
-          loadingLi.value = false;
+
+          if (loadingLi.indexPerson === indexCurrentPerson)
+            loadingLi.status = false;
         });
       console.log(response);
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
