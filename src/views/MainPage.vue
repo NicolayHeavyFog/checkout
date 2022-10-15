@@ -11,7 +11,7 @@
         ></v-skeleton-loader>
       </div>
     </div>
-    <PassengerList v-else />
+    <PassengerList v-else @updateFlightInfo="updateFlightInfo" />
   </main>
 </template>
 
@@ -28,6 +28,11 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+    updateFlightInfo(flightInfo) {
+      this.$emit("updateFlightInfo", flightInfo);
+    },
   },
 };
 </script>
@@ -62,6 +67,7 @@ export default {
       & .v-skeleton-loader__chip {
         width: 100%;
         height: 40px;
+        border-radius: 40px;
       }
 
       & .v-skeleton-loader__button {

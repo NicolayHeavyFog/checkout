@@ -7,7 +7,10 @@ export default function (instance) {
       return instance.get(`_api/airlines/${airline}/`);
     },
     infoDetailed(payload) {
-      return instance.post("_seatmap_api/general/doByPassengers", payload);
+      return instance.post("_seatmap_api/general/doByPassenger", payload);
+    },
+    register(payload) {
+      return instance.post("auto/checkout/", payload);
     },
   };
 }

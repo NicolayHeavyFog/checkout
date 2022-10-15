@@ -16,6 +16,7 @@ import Teleport from "vue2-teleport";
 import { mapState } from "pinia";
 import { useUsers } from "@/store/users";
 export default {
+  name: "BaseNotification",
   components: { Teleport },
   data() {
     return {
@@ -29,6 +30,8 @@ export default {
     notification(val) {
       if (val.type && val.textMessage) {
         this.show = true;
+      } else {
+        this.show = false;
       }
     },
   },

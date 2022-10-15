@@ -15,6 +15,7 @@
 import Teleport from "vue2-teleport";
 
 export default {
+  name: "BasePopup",
   props: {
     condition: {
       type: Boolean,

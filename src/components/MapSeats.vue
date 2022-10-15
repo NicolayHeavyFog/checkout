@@ -41,9 +41,6 @@
         <td>
           <aside>
             <ul class="card-map__price-list">
-              <li class="card-map__price-item free">
-                <span>Свободно</span>
-              </li>
               <li class="card-map__price-item chosen">
                 <span>Выбрано</span>
               </li>
@@ -71,9 +68,10 @@ import { colors } from "@/constants";
 import { mapWritableState } from "pinia";
 import { useUsers } from "@/store/users";
 export default {
+  name: "MapSeats",
   props: {
     mapSeats: {
-      type: Array,
+      type: Object,
       requared: true,
     },
     person: {
@@ -95,7 +93,7 @@ export default {
   methods: {
     getHeaderLetter() {
       let i = 0;
-      const collections = this.mapSeats[0].rows;
+      const collections = this.mapSeats.rows;
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
         lineSeats.forEach((currentSeat) => {
@@ -119,6 +117,7 @@ export default {
           }
         });
       });
+      this.uniquePrice.sort((a, b) => a.price - b.price);
     },
     calculateStatusSeat(seat) {
       let classList = "";
@@ -154,7 +153,7 @@ export default {
       }
     },
     toModifyMapSeats(mapSeats) {
-      const map = mapSeats[0];
+      const map = mapSeats;
       const xCount = map.xCount;
       const newMap = [];
 
@@ -206,15 +205,23 @@ export default {
 
 .card-map__price {
   &-list {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-auto-rows: 1fr;
+    grid-template-columns: repeat(4, 1fr);
     list-style-type: none;
-    flex-wrap: wrap;
+    justify-items: center;
     margin: 0;
     padding: 0;
     gap: 5px;
   }
   &-item {
+    &:nth-child(2),
+    &:nth-child(1) {
+      grid-column: span 2;
+      width: 100%;
+      text-align: center;
+    }
+
     &::before {
       content: "";
       display: inline-block;
@@ -249,6 +256,22 @@ export default {
 
     &.color4::before {
       background-color: #ff8282;
+    }
+
+    &.color5::before {
+      background-color: #7fb5b5;
+    }
+
+    &.color6::before {
+      background-color: #9d9101;
+    }
+
+    &.color7::before {
+      background-color: #382c1e;
+    }
+
+    &.color8::before {
+      background-color: #1e2460;
     }
 
     span {
