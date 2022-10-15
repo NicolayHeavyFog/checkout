@@ -1,8 +1,10 @@
 import { ref } from "vue";
 import { useUsers } from "@/store/users";
+import { useCards } from "@/store/cards";
 
 export default function useCardPassenger(emit) {
-  const store = useUsers();
+  const storeUsers = useUsers();
+  const storeCards = useCards();
   const lastName = ref("");
   const ticketNumber = ref("");
   const textButton = ref("Добавить");
@@ -10,9 +12,10 @@ export default function useCardPassenger(emit) {
   const chosenSeat = ref(null);
   const id = ref(null);
   const loadingBtn = ref(false);
+  const isConfirmed = ref(false);
 
   async function openCardMap() {
-    const p = store.findPersonByTicket(ticketNumber.value);
+    const p = storeUsers.findPersonByTicket(ticketNumber.value);
     // const p = store.persons.find(
     //   (_) =>
     //     _.ticketNumber === ticketNumber.value && lastName.value === _.lastName
@@ -22,17 +25,22 @@ export default function useCardPassenger(emit) {
     } else {
       loadingBtn.value = true;
 
-      await store.getInfoFlight({
+      await storeUsers.getInfoFlight({
         lastName: lastName.value,
         ticketNumber: ticketNumber.value,
       });
       loadingBtn.value = false;
       textButton.value = "Выбрать место";
+      isConfirmed.value = true;
     }
   }
 
   function removeCard() {
-    emit("removeCard", id.value, ticketNumber.value);
+    storeCards.deleteCard(
+      { id: id.value, ticketNumber: ticketNumber.value },
+      isConfirmed.value
+    );
+    // emit("removeCard", { id: id.value, ticketNumber: ticketNumber.value });
   }
 
   return {
@@ -42,9 +50,10 @@ export default function useCardPassenger(emit) {
     chosenSeat,
     loadingBtn,
     id,
-    store,
+    storeUsers,
     openCardMap,
     removeCard,
     textButton,
+    isConfirmed,
   };
 }

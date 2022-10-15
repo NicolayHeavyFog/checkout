@@ -5,8 +5,13 @@
       :info="headerInfo"
       @change-flight="changeFlight()"
     />
-    <MainPage :preloader="fetchStatus.loading" />
-    <MainFooter v-if="!fetchStatus.loading" />
+    <MainPage
+      :preloader="fetchStatus.loading && !toOpenListCards"
+      @updateFlightInfo="updateFlightInfo"
+    />
+    <MainFooter
+      v-if="!fetchStatus.loading && store.statusFlight === 'OPENED'"
+    />
     <v-app>
       <v-dialog v-model="dialog" persistent max-width="809">
         <v-card class="suggestion">
@@ -47,7 +52,7 @@
                             : 'suggestion__text--color-red'
                         "
                       >
-                        {{
+                        &nbsp;{{
                           seg.status === "OPENED"
                             ? ` открыта до ${convertTime(
                                 seg.webCheckInClose,
@@ -100,6 +105,7 @@ import BaseNotification from "@/components/BaseNotification.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { mapActions, mapWritableState } from "pinia";
 import { useUsers } from "@/store/users";
+import { useCards } from "@/store/cards";
 
 export default {
   name: "App",
@@ -114,8 +120,10 @@ export default {
   data() {
     return {
       radioGroup: 0,
-      dialog: false,
       flightInfo: null,
+      store: useUsers(),
+      storeCards: useCards(),
+      toOpenListCards: null,
     };
   },
   computed: {
@@ -125,12 +133,17 @@ export default {
       "segments",
       "airline",
       "persons",
+      "dialog",
+      "basePersonIsDefined",
+      "flightKey",
     ]),
+    ...mapWritableState(useCards, ["cards"]),
     headerInfo() {
       return {
         departureDateTime: this.flightInfo?.departureDateTime,
         arrivalDateTime: this.flightInfo?.arrivalDateTime,
-        flightCode: this.basePerson?.flight?.full_flight_number,
+        flightCode:
+          this.flightInfo?.airlineCode + this.flightInfo?.flightNumber,
         arrivalCity: this.flightInfo?.arrivalCity,
         arrivalCityCode: this.flightInfo?.arrivalCityCode,
         departureCity: this.flightInfo?.departureCity,
@@ -152,68 +165,110 @@ export default {
       "getAirline",
       "getSegment",
       "getInfoFlight",
+      "checkValidPassenger",
     ]),
 
-    processingSegments(segmentsData) {
-      this.segments = segmentsData.selectSegmentsGroupCase.segmentGroups.map(
-        (currentSegment) => {
-          const seg = currentSegment[0];
-          return {
-            webCheckInOpen: seg.stages.webCheckInOpen,
-            webCheckInClose: seg.stages.webCheckInClose,
-            departureCity: seg.departureCity,
-            arrivalCity: seg.arrivalCity,
-            departureAirport: seg.departureAirport,
-            airline: seg.airline,
-            flightCode: seg.airlineCode + "-" + seg.flightNumber,
-            arrivalDateTime: seg.arrivalDateTime,
-            departureDateTime: seg.departureDateTime,
-            status: seg.status,
-          };
-        }
-      );
-    },
-    async setTicket() {
-      this.dialog = false;
-      this.fetchStatus.loading = true;
-      this.flightInfo = await this.getInfoFlight(
-        {
-          ticketNumber: this.basePerson.ticket_number,
-          lastName: this.basePerson.last_name,
-        },
-        this.radioGroup
-      );
+    updateFlightInfo(flightInfo) {
+      this.flightInfo = flightInfo;
+      this.fetchStatus.success = true;
       this.fetchStatus.loading = false;
+
+      this.store.notification = {
+        type: null,
+        availableReload: null,
+        textMessage: null,
+      };
     },
 
-    async fetch() {
-      try {
-        const id = this.$route.query.id;
-        const segmentsData = await this.getSegment(id);
-        if (segmentsData.result === "SELECT_SEGMENTS_GROUP") {
-          this.processingSegments(segmentsData);
-          this.dialog = true;
-        } else {
-          this.flightInfo = await this.getInfoFlight({
+    async setTicket() {
+      this.dialog = false;
+      this.toOpenListCards = false;
+      this.storeCards.$reset();
+      this.fetchStatus.loading = true;
+      this.flightKey = null;
+      const fI = (
+        await this.getInfoFlight(
+          {
             ticketNumber: this.basePerson.ticket_number,
             lastName: this.basePerson.last_name,
-          });
-          this.fetchStatus.success = true;
-          this.fetchStatus.loading = false;
-        }
-      } catch (err) {
-        console.log(err);
+          },
+          this.radioGroup
+        )
+      ).flightInfo;
+      this.updateFlightInfo(fI);
+      this.basePersonIsDefined = true;
+    },
+
+    async fetch(lastName, ticketNumber) {
+      const segmentsData = await this.checkValidPassenger({
+        lastName,
+        ticketNumber,
+      });
+
+      if (String(segmentsData?.code).startsWith("5")) {
+        this.store.notification = {
+          type: "error",
+          availableReload: false,
+          textMessage: segmentsData.data.error,
+        };
+
         this.fetchStatus.success = false;
-        this.fetchStatus.loading = true;
+      } else if (String(segmentsData?.code).startsWith("4")) {
+        this.store.basePersonIsDefined = false;
+        this.toOpenListCards = true;
+
+        this.store.notification = {
+          type: "error",
+          availableReload: false,
+          textMessage: segmentsData.data.error,
+        };
+
+        this.fetchStatus.success = false;
+      } else if (segmentsData.result === "SELECT_SEGMENTS_GROUP") {
+        this.store.parseSegments(segmentsData);
+        this.dialog = true;
+      } else if (segmentsData.result === "CAPTCHA_REQUIRED") {
+        this.store.basePersonIsDefined = false;
+        this.toOpenListCards = true;
+
+        this.store.notification = {
+          type: "error",
+          availableReload: false,
+          textMessage: "CAPTCHA_REQUIRED",
+        };
+
+        this.fetchStatus.success = false;
+      } else if (segmentsData.result === "OK") {
+        this.store.basePersonIsDefined = true;
+        this.flightInfo = (
+          await this.getInfoFlight({
+            ticketNumber: ticketNumber,
+            lastName: lastName,
+          })
+        ).flightInfo;
+        this.fetchStatus.success = true;
+        this.fetchStatus.loading = false;
       }
     },
   },
   async created() {
-    this.fetch();
+    const id = this.$route.query.id;
+    const responsePerson = await this.getPerson(id);
+    if (!responsePerson) return;
+    const responseAirline = await this.getAirline();
+    if (!responseAirline) return;
+    await this.fetch(
+      this.basePerson?.last_name,
+      this.basePerson?.ticket_number
+    );
   },
 };
 </script>
 <style lang="scss">
+.v-icon.v-icon {
+  margin: auto 14px auto auto;
+}
+
 .button {
   & .v-btn__content {
     letter-spacing: 0;

@@ -66,6 +66,7 @@ import { convertTime } from "@/helpers";
 import { mapState } from "pinia";
 import { useUsers } from "@/store/users";
 export default {
+  name: "MainHeader",
   props: {
     preloader: {
       type: Boolean,

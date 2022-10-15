@@ -15,6 +15,7 @@
 <script>
 import { GREEN, BLUE } from "@/constants";
 export default {
+  name: "BaseButton",
   props: {
     globalState: {
       type: String,

@@ -1,6 +1,7 @@
 import { ref, reactive } from "vue";
 import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
+import { useCards } from "@/store/cards";
 
 export default function useCardMap() {
   const currentPerson = ref(null);
@@ -10,6 +11,7 @@ export default function useCardMap() {
   const snackbar = ref(false);
   const snackbarText = ref(null);
   const store = useUsers();
+  const storeCards = useCards();
   const loadingSelect = ref(false);
   const loadingLi = reactive({
     status: false,
@@ -51,6 +53,10 @@ export default function useCardMap() {
         });
       console.log(response);
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
+      storeCards.patchCard(
+        storeCards.getCardIdByIndexPerson(indexCurrentPerson),
+        { normalSeat: seat }
+      );
       updateActivePerson(indexCurrentPerson);
       // currentPerson.value = store.persons[indexCurrentPerson];
       // setTimeout(() => {
@@ -68,11 +74,16 @@ export default function useCardMap() {
       activeSelectedSeat.setAttribute("data-letter", letter);
       const indicator = activeSelectedSeat.classList.toggle(className);
 
-      if (!indicator)
+      if (!indicator) {
         store.updatePerson(indexCurrentPerson, {
           normalSeat: null,
           seatRate: null,
         });
+        storeCards.patchCard(
+          storeCards.getCardIdByIndexPerson(indexCurrentPerson),
+          { normalSeat: null }
+        );
+      }
 
       const newActiveLiElement = {
         personIndex: indexCurrentPerson,

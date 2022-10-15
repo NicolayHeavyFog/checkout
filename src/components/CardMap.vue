@@ -1,6 +1,7 @@
 <template>
   <div class="card-map">
     <div class="card-map__left-side">
+      <div class="card-map__overlay" v-if="loadingLi.status"></div>
       <span class="card-map__description">Выберите место для пассажиров:</span>
       <ul class="card-map__list" v-if="$vuetify.breakpoint.width > 900">
         <li
@@ -152,7 +153,13 @@ import { BLUE } from "@/constants";
 import { ref, onMounted, watch } from "vue";
 
 export default {
+  name: "CardMap",
   components: { MapSeats, BaseButton },
+  props: {
+    open: {
+      type: Boolean,
+    },
+  },
 
   setup(props, { emit }) {
     const currentSeatsMap = ref(null);
@@ -181,16 +188,28 @@ export default {
       toEmailForm();
     }
 
-    watch(
-      () => store.persons,
-      () => {
-        currentPerson.value = store.activePerson;
-      }
-    );
-
     watch(currentPerson, (val) => {
       currentSeatsMap.value = val.mapSeats;
     });
+
+    watch(
+      () => props.open,
+      (val) => {
+        if (val === true) {
+          const i = store.persons.findIndex((p) => {
+            return !p?.normalSeat;
+          });
+          updateActivePerson(i === -1 ? 0 : i);
+        }
+      }
+    );
+
+    watch(
+      () => store.persons,
+      () => {
+        currentPerson.value = store.activePerson || store.persons[0];
+      }
+    );
 
     watch(
       activeButtonElements,
@@ -198,6 +217,7 @@ export default {
         val.forEach((btn) => {
           if (btn?.lastActiveLi !== btn.activeLi && btn?.lastActiveLi) {
             btn.lastActiveLi.classList.remove(btn.activeClass);
+            // btn.lastActiveLi.removeAttribute("data-letter");
           }
         });
       },
@@ -237,10 +257,28 @@ export default {
 </script>
 
 <style lang="scss">
+.v-bottom-sheet.v-dialog {
+  overflow: unset !important;
+
+  @media (max-width: 900px) {
+    overflow-y: scroll !important;
+  }
+}
+
 .card-map__item--selected {
   & .card-map__item-button {
     max-width: 370px;
   }
+}
+
+.card-map__overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  z-index: 100;
 }
 
 .card-map__item-status {
