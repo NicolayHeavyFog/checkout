@@ -10,8 +10,3 @@ export const colors = [
   "#382c1e",
   "#1e2460",
 ];
-
-// export default {
-//   green: "#A7C42A",
-//   blue: "#07237E",
-// };

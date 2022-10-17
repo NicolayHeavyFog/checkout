@@ -1,24 +1,9 @@
-# checkin
+# checkin24
 
-## Project setup
-```
-npm install
-```
+E-commerce project for online-register to flight.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+At the first glance it can image so as easy work, but, to be honest, the project has a big variable of scenarios. I needed to process a lot of requests with a lot of responses. Each response status needs its own activity. Long story short, work is enough.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+For while, I have appearance so interesting task about taking seat map for flights. It was curious.
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+I used Vue 2 composition API, Pinia, and Vuetify. That is enough at the moment.
