@@ -98,9 +98,9 @@ export default {
       let i = 0;
       let maxLineLength = 0;
       const collections = this.mapSeats.rows;
+      
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
-
         if (maxLineLength < lineSeats.length) {
           maxLineLength = lineSeats.length;
           this.uniqueHeaderLetters = [];
