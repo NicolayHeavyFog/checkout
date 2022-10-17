@@ -101,7 +101,6 @@ export default {
       
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
-
         if (maxLineLength < lineSeats.length) {
           maxLineLength = lineSeats.length;
           this.uniqueHeaderLetters = [];
