@@ -51,9 +51,12 @@
                 class="card-map__price-item"
                 v-for="(color, index) in uniquePrice"
                 :key="index"
-                :class="`color${index + 1}`"
+                :data-color="color.color"
+                :style="`color:${color.color}`"
               >
-                <span class="">{{ color.price }} ₽</span>
+                <span class="card-map__price-description"
+                  >{{ color.price }} ₽</span
+                >
               </li>
             </ul>
           </aside>
@@ -93,19 +96,26 @@ export default {
   methods: {
     getHeaderLetter() {
       let i = 0;
+      let maxLineLength = 0;
       const collections = this.mapSeats.rows;
+      
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
+
+        if (maxLineLength < lineSeats.length) {
+          maxLineLength = lineSeats.length;
+          this.uniqueHeaderLetters = [];
+          lineSeats.forEach((currentSeat) => {
+            const currentSymbol =
+              currentSeat.seatNumber === ""
+                ? ""
+                : currentSeat.seatNumber.slice(-1);
+            this.uniqueHeaderLetters.push(currentSymbol);
+          });
+        }
+
         lineSeats.forEach((currentSeat) => {
           const currentPrice = currentSeat.rate;
-          const currentSymbol =
-            currentSeat.seatNumber === ""
-              ? ""
-              : currentSeat.seatNumber.slice(-1);
-
-          if (!this.uniqueHeaderLetters.includes(currentSymbol)) {
-            this.uniqueHeaderLetters.push(currentSymbol);
-          }
           if (
             !this.uniquePrice.find(
               (uniqCurrentPrice) => uniqCurrentPrice.price === currentPrice
@@ -214,6 +224,13 @@ export default {
     padding: 0;
     gap: 5px;
   }
+
+  &-description {
+    color: black;
+    font-size: 14px;
+    line-height: 16px;
+  }
+
   &-item {
     &:nth-child(2),
     &:nth-child(1) {
@@ -228,6 +245,7 @@ export default {
       width: 10px;
       height: 10px;
       margin-right: 5px;
+      background-color: currentColor;
     }
 
     &.free::before {
@@ -240,43 +258,6 @@ export default {
 
     &.occupied::before {
       background-color: #dcdcdc;
-    }
-
-    &.color1::before {
-      background-color: #e2a2ed;
-    }
-
-    &.color2::before {
-      background-color: #ffcd82;
-    }
-
-    &.color3::before {
-      background-color: #ffaf82;
-    }
-
-    &.color4::before {
-      background-color: #ff8282;
-    }
-
-    &.color5::before {
-      background-color: #7fb5b5;
-    }
-
-    &.color6::before {
-      background-color: #9d9101;
-    }
-
-    &.color7::before {
-      background-color: #382c1e;
-    }
-
-    &.color8::before {
-      background-color: #1e2460;
-    }
-
-    span {
-      font-size: 14px;
-      line-height: 16px;
     }
   }
 }
