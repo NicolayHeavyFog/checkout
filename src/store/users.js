@@ -114,7 +114,7 @@ export const useUsers = defineStore("users", {
       }
     },
     async register(payload) {
-      return await api.passenger.register(payload);
+      return await api.requestData.register(payload);
     },
     // eslint-disable-next-line no-unused-vars
     async getPerson(id) {

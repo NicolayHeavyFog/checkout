@@ -3,6 +3,7 @@ node_modules
 /dist
 package-lock.json
 mock.js
+README.md
 
 
 # local env files

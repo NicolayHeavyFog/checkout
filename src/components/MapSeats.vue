@@ -47,6 +47,8 @@
               <li class="card-map__price-item occupied">
                 <span>Занято</span>
               </li>
+            </ul>
+            <ul class="card-map__price-list card-map__price-list--custom">
               <li
                 class="card-map__price-item"
                 v-for="(color, index) in uniquePrice"
@@ -98,9 +100,9 @@ export default {
       let i = 0;
       let maxLineLength = 0;
       const collections = this.mapSeats.rows;
+
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
-
         if (maxLineLength < lineSeats.length) {
           maxLineLength = lineSeats.length;
           this.uniqueHeaderLetters = [];
@@ -214,27 +216,38 @@ export default {
 
 .card-map__price {
   &-list {
-    display: grid;
-    grid-auto-rows: 1fr;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     list-style-type: none;
     justify-items: center;
-    margin: 0;
+    margin: auto;
     padding: 0;
     gap: 5px;
+    justify-content: space-evenly;
+
+    &--custom {
+      width: 65%;
+      display: flex;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      grid-auto-rows: unset;
+      grid-template-columns: unset;
+      list-style-type: none;
+      justify-items: center;
+      margin: auto;
+      padding: 0;
+      gap: 5px;
+    }
   }
 
   &-description {
     color: black;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 16px;
   }
 
   &-item {
     &:nth-child(2),
     &:nth-child(1) {
-      grid-column: span 2;
-      width: 100%;
       text-align: center;
     }
 
