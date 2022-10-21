@@ -97,6 +97,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import useCardPassenger from "@/hooks/useCardPassenger";
 import { useCards } from "@/store/cards";
 import { getKeyFlight } from "@/helpers";
+import { useGtm } from "@gtm-support/vue2-gtm";
 export default {
   name: "CardPassenger",
   components: { BaseButton },
@@ -121,6 +122,7 @@ export default {
     const textMessageLastName = ref(null);
     const showMessageTicketNumber = ref(false);
     const textMessageTicketNumber = ref(null);
+    const gtm = useGtm();
 
     const statusFlight = ref(null);
     const {
@@ -139,6 +141,14 @@ export default {
 
     async function addPersonOrChoseSeat() {
       if (isConfirmed.value) {
+        console.log("open");
+        gtm.trackEvent({
+          event: "choose_seat",
+          category: "category",
+          action: "click",
+          label: "Выбор места",
+          value: 5000,
+        });
         emit("openCardMap");
       } else {
         handlerNotification(storeCards.validateCard(id.value));
@@ -168,6 +178,8 @@ export default {
           lastName: lastName.value,
           ticketNumber: ticketNumber.value,
         });
+
+        console.log(response);
         if (String(response?.code).startsWith("4")) {
           showErrorNoConfirmed.value = true;
           isConfirmed.value = false;

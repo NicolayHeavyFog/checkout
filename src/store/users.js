@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import api from "@/api/index.js";
 import { getKeyFlight } from "@/helpers";
+import { useGtm } from "@gtm-support/vue2-gtm";
 // import _ from "@/mock";
 
 export const useUsers = defineStore("users", {
@@ -24,6 +25,7 @@ export const useUsers = defineStore("users", {
       availableReload: null,
       textMessage: null,
     },
+    gtm: useGtm(),
   }),
   getters: {
     checkSeats() {
@@ -214,6 +216,19 @@ export const useUsers = defineStore("users", {
           textMessage: "Ошибка получения билета",
         };
         this.fetchStatus.success = false;
+        console.log("ошибка");
+
+        // window.dataLayer?.push({
+        //   event: "ticket_api_error",
+        //   // further parameters
+        // });
+        this.gtm.trackEvent({
+          event: "ticket_api_error",
+          action: "click",
+          label: "Ошибка получения билета",
+          value: 5000,
+        });
+
         return response.data;
       });
       if (ticketInfo.status === "fulfilled" && mapInfo.status === "rejected") {
