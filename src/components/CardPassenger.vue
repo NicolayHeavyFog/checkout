@@ -95,9 +95,10 @@
 import { onMounted, watch, ref, reactive, nextTick } from "vue";
 import BaseButton from "@/components/BaseButton.vue";
 import useCardPassenger from "@/hooks/useCardPassenger";
+import { event } from "vue-gtag";
 import { useCards } from "@/store/cards";
 import { getKeyFlight } from "@/helpers";
-import { useGtm } from "@gtm-support/vue2-gtm";
+// import { useGtm } from "@gtm-support/vue2-gtm";
 export default {
   name: "CardPassenger",
   components: { BaseButton },
@@ -122,7 +123,7 @@ export default {
     const textMessageLastName = ref(null);
     const showMessageTicketNumber = ref(false);
     const textMessageTicketNumber = ref(null);
-    const gtm = useGtm();
+    // const gtm = useGtm();
 
     const statusFlight = ref(null);
     const {
@@ -131,24 +132,24 @@ export default {
       mapSeats,
       chosenSeat,
       loadingBtn,
-      openCardMap,
       id,
       storeUsers,
       removeCard,
       textButton,
       isConfirmed,
-    } = useCardPassenger(emit);
+    } = useCardPassenger();
 
     async function addPersonOrChoseSeat() {
       if (isConfirmed.value) {
-        console.log("open");
-        gtm.trackEvent({
-          event: "choose_seat",
-          category: "category",
-          action: "click",
-          label: "Выбор места",
-          value: 5000,
-        });
+        event("choose_seat", { method: "Google" });
+
+        // gtm.trackEvent({
+        //   event: "choose_seat",
+        //   category: "category",
+        //   action: "click",
+        //   label: "Выбор места",
+        //   value: 5000,
+        // });
         emit("openCardMap");
       } else {
         handlerNotification(storeCards.validateCard(id.value));
@@ -222,6 +223,7 @@ export default {
             storeUsers.basePersonIsDefined = true;
           }
           isConfirmed.value = true;
+          // console.log(res);
           storeCards.patchCard(id.value, {
             isConfirmed: isConfirmed.value,
             mapSeats: res.mapSeats,
@@ -300,7 +302,6 @@ export default {
       mapSeats,
       chosenSeat,
       loadingBtn,
-      openCardMap,
       removeCard,
       textButton,
       isConfirmed,

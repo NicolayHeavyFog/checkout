@@ -2,12 +2,12 @@ import { ref, reactive } from "vue";
 import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
 import { useCards } from "@/store/cards";
-import { useGtm } from "@gtm-support/vue2-gtm";
+// import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default function useCardMap() {
   const currentPerson = ref(null);
   const currentIndexPerson = ref(null);
-  const gtm = useGtm();
+  // const gtm = useGtm();
   const activeButtonElements = ref([]);
   const snackbar = ref(false);
   const snackbarText = ref(null);
@@ -53,12 +53,12 @@ export default function useCardMap() {
         });
 
       console.log(response);
-      gtm.trackEvent({
-        event: "select_seat",
-        action: "click",
-        label: "Выбор места",
-        value: 5000,
-      });
+      // gtm.trackEvent({
+      //   event: "select_seat",
+      //   action: "click",
+      //   label: "Выбор места",
+      //   value: 5000,
+      // });
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
       storeCards.patchCard(
         storeCards.getCardIdByIndexPerson(indexCurrentPerson),

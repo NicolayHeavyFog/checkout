@@ -97,23 +97,24 @@ export default {
   },
   methods: {
     getHeaderLetter() {
+      this.uniqueHeaderLetters = this.mapSeats.names;
       let i = 0;
-      let maxLineLength = 0;
+      // let maxLineLength = 0;
       const collections = this.mapSeats.rows;
 
       collections.forEach((currentLine) => {
         const lineSeats = currentLine.seats;
-        if (maxLineLength < lineSeats.length) {
-          maxLineLength = lineSeats.length;
-          this.uniqueHeaderLetters = [];
-          lineSeats.forEach((currentSeat) => {
-            const currentSymbol =
-              currentSeat.seatNumber === ""
-                ? ""
-                : currentSeat.seatNumber.slice(-1);
-            this.uniqueHeaderLetters.push(currentSymbol);
-          });
-        }
+        // if (maxLineLength < lineSeats.length) {
+        //   maxLineLength = lineSeats.length;
+        //   this.uniqueHeaderLetters = [];
+        //   lineSeats.forEach((currentSeat) => {
+        //     const currentSymbol =
+        //       currentSeat.seatNumber === ""
+        //         ? ""
+        //         : currentSeat.seatNumber.slice(-1);
+        //     this.uniqueHeaderLetters.push(currentSymbol);
+        //   });
+        // }
 
         lineSeats.forEach((currentSeat) => {
           const currentPrice = currentSeat.rate;
@@ -141,12 +142,13 @@ export default {
       if (seat.available) {
         this.chosenSeat = seat;
         const normalSeat = () => {
-          const _ = index.split(":");
-          const num = Number(_[0]) + 1;
-          const symb = this.uniqueHeaderLetters.find(
-            (letter, index) => index === Number(_[1])
-          );
-          return num + symb;
+          // const _ = index.split(":");
+          // const num = Number(_[0]) + 1;
+          // const symb = this.uniqueHeaderLetters.find(
+          //   (letter, index) => index === Number(_[1])
+          // );
+
+          return seat.seatNumber;
         };
         let indexCurrentPerson;
         this.persons.forEach((p, i) => {
