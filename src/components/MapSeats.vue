@@ -32,7 +32,9 @@
               seat?.priceColor ? `background-color:${seat.priceColor}` : ''
             "
             v-if="calculateStatusSeat(seat) !== 'empty'"
-            @click="doChoosePlace(seat, `${indexExternal}:${indexInternal}`)"
+            @click="
+              doChoosePlace(seat, `${indexExternal}:${indexInternal}`, person)
+            "
           ></button>
         </td>
       </tr>
@@ -69,9 +71,8 @@
 </template>
 
 <script>
-import { colors } from "@/constants";
-import { mapWritableState } from "pinia";
-import { useUsers } from "@/store/users";
+import useMapSeats from "@/hooks/useMapSeats";
+import { onMounted } from "vue";
 export default {
   name: "MapSeats",
   props: {
@@ -84,129 +85,57 @@ export default {
       requared: true,
     },
   },
-  data() {
-    return {
-      uniqueHeaderLetters: [],
-      uniquePrice: [],
-      chosenSeat: null,
-      mapSeatsModified: null,
-    };
-  },
-  computed: {
-    ...mapWritableState(useUsers, ["persons"]),
-  },
-  methods: {
-    getHeaderLetter() {
-      this.uniqueHeaderLetters = this.mapSeats.names;
-      let i = 0;
-      // let maxLineLength = 0;
-      const collections = this.mapSeats.rows;
+  setup(props, { emit }) {
+    const {
+      uniqueHeaderLetters,
+      uniquePrice,
+      chosenSeat,
+      mapSeatsModified,
+      storeUsers,
 
-      collections.forEach((currentLine) => {
-        const lineSeats = currentLine.seats;
-        // if (maxLineLength < lineSeats.length) {
-        //   maxLineLength = lineSeats.length;
-        //   this.uniqueHeaderLetters = [];
-        //   lineSeats.forEach((currentSeat) => {
-        //     const currentSymbol =
-        //       currentSeat.seatNumber === ""
-        //         ? ""
-        //         : currentSeat.seatNumber.slice(-1);
-        //     this.uniqueHeaderLetters.push(currentSymbol);
-        //   });
-        // }
+      getUniquePrice,
+      calculateStatusSeat,
+      doChoosePlace,
+      modifyMapSeats,
+    } = useMapSeats(emit);
 
-        lineSeats.forEach((currentSeat) => {
-          const currentPrice = currentSeat.rate;
-          if (
-            !this.uniquePrice.find(
-              (uniqCurrentPrice) => uniqCurrentPrice.price === currentPrice
-            ) &&
-            currentPrice
-          ) {
-            this.uniquePrice.push({ price: currentPrice, color: colors[i] });
-            i++;
-          }
-        });
-      });
-      this.uniquePrice.sort((a, b) => a.price - b.price);
-    },
-    calculateStatusSeat(seat) {
-      let classList = "";
-      if (seat.available && seat.exists) classList += "free";
-      else if (!seat.available && seat.exists) classList += "occupied";
-      else classList += "empty";
-      return classList;
-    },
-    doChoosePlace(seat, index) {
-      if (seat.available) {
-        this.chosenSeat = seat;
-        const normalSeat = () => {
-          // const _ = index.split(":");
-          // const num = Number(_[0]) + 1;
-          // const symb = this.uniqueHeaderLetters.find(
-          //   (letter, index) => index === Number(_[1])
-          // );
+    onMounted(() => {
+      uniqueHeaderLetters.value = props.mapSeats.names;
+      uniquePrice.value = getUniquePrice(props.mapSeats);
+      mapSeatsModified.value = modifyMapSeats(props.mapSeats);
 
-          return seat.seatNumber;
-        };
-        let indexCurrentPerson;
-        this.persons.forEach((p, i) => {
-          if (p.ticketNumber === this.person.ticketNumber) {
-            indexCurrentPerson = i;
-          }
-        });
-
-        this.$emit("update", {
-          indexCurrentPerson,
-          indexElement: index,
-          rate: this.chosenSeat.rate,
-          seat: normalSeat(),
-        });
-      }
-    },
-    toModifyMapSeats(mapSeats) {
-      const map = mapSeats;
-      const xCount = map.xCount;
-      const newMap = [];
-
-      function createEmptySpace(newLine) {
-        if (newLine.length < xCount) {
-          newLine.push({
-            available: false,
-            exists: false,
-            rate: "",
-            seatNumber: "",
+      if (props.person.normalSeat) {
+        const seat = props.person.normalSeat;
+        const indexCurrentPerson = storeUsers.findIndexPersonByTicket(
+          props.person.ticketNumber
+        );
+        const extrenalIndex = parseInt(seat) - 1;
+        const internalIndex = uniqueHeaderLetters.value.findIndex(
+          (letter) => letter === seat.slice(-1)
+        );
+        console.log(extrenalIndex, internalIndex);
+        const indexElement = `${extrenalIndex}:${internalIndex}`;
+        if (extrenalIndex && internalIndex) {
+          emit("forceUpdate", {
+            indexCurrentPerson,
+            indexElement,
           });
-          createEmptySpace(newLine);
         }
       }
+    });
 
-      map.rows.forEach((line) => {
-        const newLine = [];
-        line.seats.forEach((seat) => {
-          if (seat.rate) {
-            seat.priceColor = this.uniquePrice.find(
-              (p) => p.price === seat.rate
-            ).color;
-          }
-          newLine.push(seat);
-        });
-        createEmptySpace(newLine);
-        newMap.push({ seats: newLine, row_number: line.row_number });
-      });
-      return newMap;
-    },
-  },
-  watch: {
-    mapSeats: {
-      handler(val) {
-        this.getHeaderLetter();
-        this.mapSeatsModified = this.toModifyMapSeats(val);
-      },
-      immediate: true,
-      deep: true,
-    },
+    return {
+      uniqueHeaderLetters,
+      uniquePrice,
+      chosenSeat,
+      mapSeatsModified,
+      storeUsers,
+
+      getUniquePrice,
+      calculateStatusSeat,
+      doChoosePlace,
+      modifyMapSeats,
+    };
   },
 };
 </script>

@@ -9,7 +9,7 @@
           v-for="(person, index) of store.persons"
           :key="index"
           :data-index="index"
-          :class="setClassSuccess(person)"
+          :class="setClass(person)"
           ref="items"
         >
           <div
@@ -31,11 +31,7 @@
               person.fullName + " " + person.lastName
             }}</strong>
             <span class="card-map__item-status">{{
-              person?.normalSeat
-                ? `Место ${person.normalSeat} за ${numberFormat(
-                    person.seatRate
-                  )} ₽`
-                : "Место не выбрано"
+              doPersonStatus(person)
             }}</span>
           </button>
         </li>
@@ -45,6 +41,9 @@
         v-if="$vuetify.breakpoint.width <= 900"
         v-model="currentPerson"
         :items="store.persons"
+        :item-disabled="
+          (person) => !person.possibleActions.includes('CHANGE_SEAT')
+        "
         background-color="white"
         hide-details
         return-object
@@ -55,10 +54,7 @@
         style="border-radius: 8px"
       >
         <template v-slot:selection="data">
-          <div
-            class="card-map__item-button"
-            :class="setClassSuccess(data.item)"
-          >
+          <div class="card-map__item-button" :class="setClass(data.item)">
             <strong class="card-map__item-name">{{
               data.item.fullName + " " + data.item.lastName
             }}</strong>
@@ -72,10 +68,7 @@
           </div>
         </template>
         <template v-slot:item="data">
-          <div
-            class="card-map__item-button"
-            :class="setClassSuccess(data.item)"
-          >
+          <div class="card-map__item-button" :class="setClass(data.item)">
             <strong class="card-map__item-name">{{
               data.item.fullName + " " + data.item.lastName
             }}</strong>
@@ -114,6 +107,7 @@
         :map-seats="currentSeatsMap"
         :person="currentPerson"
         @update="setSeatCurrentPerson($event)"
+        @forceUpdate="setSeatCurrentPersonDOM($event)"
       />
     </div>
     <div class="card-map__group-button mobile-buttons">
@@ -150,7 +144,7 @@ import { numberFormat } from "@/helpers";
 import useCardMap from "@/hooks/useCardMap";
 import useCardMapDOM from "@/hooks/useCardMapDOM";
 import { BLUE } from "@/constants";
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 
 export default {
   name: "CardMap",
@@ -172,12 +166,14 @@ export default {
       store,
       setNextPerson,
       setSeatCurrentPerson,
+      setSeatCurrentPersonDOM,
       updateActivePerson,
       loadingSelect,
       loadingLi,
+      doPersonStatus,
     } = useCardMap();
 
-    const { items, setPerson, setClassSuccess, toEmailForm } = useCardMapDOM(
+    const { items, setPerson, setClass, toEmailForm } = useCardMapDOM(
       currentPerson,
       updateActivePerson,
       store
@@ -195,11 +191,8 @@ export default {
     watch(
       () => props.open,
       (val) => {
-        if (val === true) {
-          const i = store.persons.findIndex((p) => {
-            return !p?.normalSeat;
-          });
-          updateActivePerson(i === -1 ? 0 : i);
+        if (val) {
+          setNextPerson();
         }
       }
     );
@@ -207,8 +200,9 @@ export default {
     watch(
       () => store.persons,
       () => {
-        currentPerson.value = store.activePerson || store.persons[0];
-      }
+        currentPerson.value = store.activePerson;
+      },
+      { immediate: true, deep: true }
     );
 
     watch(
@@ -217,18 +211,11 @@ export default {
         val.forEach((btn) => {
           if (btn?.lastActiveLi !== btn.activeLi && btn?.lastActiveLi) {
             btn.lastActiveLi.classList.remove(btn.activeClass);
-            // btn.lastActiveLi.removeAttribute("data-letter");
           }
         });
       },
       { deep: true }
     );
-
-    onMounted(() => {
-      currentIndexPerson.value = 0;
-      currentPerson.value = store.persons[currentIndexPerson.value];
-      currentPerson.value.active = true;
-    });
 
     return {
       numberFormat,
@@ -241,22 +228,32 @@ export default {
       currentSeatsMap,
       setNextPerson,
       setSeatCurrentPerson,
+      setSeatCurrentPersonDOM,
       updateActivePerson,
       loadingSelect,
       loadingLi,
 
-      setClassSuccess,
+      setClass,
       setPerson,
       items,
 
       wrapperToEmailFrom,
       BLUE,
+      doPersonStatus,
     };
   },
 };
 </script>
 
 <style lang="scss">
+.vh {
+  display: none;
+}
+
+.card-map__item {
+  position: relative;
+}
+
 .v-bottom-sheet.v-dialog {
   overflow: unset !important;
 
@@ -268,6 +265,22 @@ export default {
 .card-map__item--selected {
   & .card-map__item-button {
     max-width: 370px;
+  }
+}
+
+.card-map__item-button {
+  &--disabled {
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background-color: rgba(255, 255, 255, 0.5);
+      z-index: 10;
+      border-radius: 8px;
+    }
   }
 }
 

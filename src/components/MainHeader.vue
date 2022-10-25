@@ -1,7 +1,13 @@
 <template>
   <header
     class="header"
-    :class="info.status === 'OPENED' ? 'registration-open' : ''"
+    :class="
+      registerIsStarted
+        ? info.status === 'OPENED'
+          ? 'registration-open'
+          : ''
+        : 'registration-open'
+    "
   >
     <div class="container header__sceleton" v-if="preloader">
       <v-skeleton-loader
@@ -43,9 +49,11 @@
           <use xlink:href="#timeIcon"></use>
         </svg>
         <span class="header__submessage-notification">{{
-          info.status === "OPENED"
-            ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
-            : "Регистрация завершена"
+          registerIsStarted
+            ? info.status === "OPENED"
+              ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
+              : "Регистрация завершена"
+            : "Регистрация еще не началась"
         }}</span>
       </span>
       <v-btn
@@ -63,7 +71,7 @@
 
 <script>
 import { convertTime } from "@/helpers";
-import { mapState } from "pinia";
+import { mapGetters, mapState } from "pinia";
 import { useUsers } from "@/store/users";
 export default {
   name: "MainHeader",
@@ -77,10 +85,13 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      users: useUsers(),
+    };
   },
   computed: {
     ...mapState(useUsers, ["segments"]),
+    ...mapGetters(useUsers, ["registerIsStarted"]),
   },
   methods: {
     convertTime,
