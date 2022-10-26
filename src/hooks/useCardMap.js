@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
 import { useCards } from "@/store/cards";
 import { numberFormat } from "@/helpers";
+import { event } from "vue-gtag";
 
 export default function useCardMap() {
   const currentPerson = ref(null);
@@ -112,7 +113,7 @@ export default function useCardMap() {
         });
 
       console.log(response);
-
+      event("select_seat", { method: "Google" });
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
       storeCards.patchCard(
         storeCards.getCardIdByIndexPerson(indexCurrentPerson),

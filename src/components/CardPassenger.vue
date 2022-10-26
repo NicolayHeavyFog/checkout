@@ -97,6 +97,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import useCardPassenger from "@/hooks/useCardPassenger";
 import { useCards } from "@/store/cards";
 import { getKeyFlight } from "@/helpers";
+import { event } from "vue-gtag";
 
 export default {
   name: "CardPassenger",
@@ -148,7 +149,7 @@ export default {
             active: true,
           }
         );
-
+        event("choose_seat", { method: "Google" });
         emit("openCardMap");
       } else {
         handlerNotification(storeCards.validateCard(id.value));

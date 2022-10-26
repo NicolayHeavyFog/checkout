@@ -6,17 +6,13 @@ import VueGtag from "vue-gtag";
 import router from "./router";
 Vue.use(PiniaVuePlugin);
 
-// Vue.use(VueAnalytics, {
-//   config: { id: "G-PLPSTK3FG6" },
-// });
-
 Vue.use(VueGtag, {
   config: { id: "GTM-5C3TND" },
 });
 
 Vue.config.productionTip = false;
 
-export const bus = new Vue();
+// export const bus = new Vue();
 // Vue.forceUpdate();
 const pinia = createPinia();
 // Vue.use(pinia);

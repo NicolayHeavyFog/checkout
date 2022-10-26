@@ -2,7 +2,7 @@
   <header
     class="header"
     :class="
-      registerIsStarted
+      storeUsers.registerIsStarted
         ? info.status === 'OPENED'
           ? 'registration-open'
           : ''
@@ -48,20 +48,14 @@
         ><svg class="header__submessage-icon">
           <use xlink:href="#timeIcon"></use>
         </svg>
-        <span class="header__submessage-notification">{{
-          registerIsStarted
-            ? info.status === "OPENED"
-              ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
-              : "Регистрация завершена"
-            : "Регистрация еще не началась"
-        }}</span>
+        <span class="header__submessage-notification">{{ flightStatus }}</span>
       </span>
       <v-btn
         @click="changeFlight()"
         absolute
         x-large
         class="button button__secondary header__button"
-        v-if="segments"
+        v-if="storeUsers.segments"
       >
         Изменить данные рейса
       </v-btn>
@@ -71,7 +65,7 @@
 
 <script>
 import { convertTime } from "@/helpers";
-import { mapGetters, mapState } from "pinia";
+import { computed } from "vue";
 import { useUsers } from "@/store/users";
 export default {
   name: "MainHeader",
@@ -84,21 +78,72 @@ export default {
       type: Object,
     },
   },
-  data() {
+
+  setup(props, { emit }) {
+    const storeUsers = useUsers();
+    convertTime;
+    function changeFlight() {
+      emit("change-flight");
+    }
+
+    const flightStatus = computed(() => {
+      console.log(storeUsers.persons.length);
+      if (storeUsers.persons.length) {
+        console.log("into first if");
+        console.log(storeUsers.registerIsStarted);
+        if (storeUsers.registerIsStarted) {
+          if (props.info.status === "OPENED") {
+            console.log("here");
+            return `Регистрация завершится ${convertTime(
+              props.info.webCheckInClose
+            )}`;
+          }
+        }
+        return "Регистрация завершена";
+      } else return "";
+    });
+
     return {
-      users: useUsers(),
+      storeUsers,
+      flightStatus,
+      convertTime,
+      changeFlight,
     };
   },
-  computed: {
-    ...mapState(useUsers, ["segments"]),
-    ...mapGetters(useUsers, ["registerIsStarted"]),
-  },
-  methods: {
-    convertTime,
-    changeFlight() {
-      this.$emit("change-flight");
-    },
-  },
+  // data() {
+  //   return {
+  //     users: useUsers(),
+  //   };
+  // },
+  // computed: {
+  // flightStatus: function () {
+  //   if (this.users) {
+  //     if (this.users.registerIsStarted) {
+  //       if (this.info.status === "OPENED") {
+  //         console.log("here");
+  //         return `Регистрация завершится ${convertTime(
+  //           this.info.webCheckInClose
+  //         )}`;
+  //       } else return "";
+  //     } else {
+  //       return "Регистрация завершена";
+  //     }
+  //   } else return "";
+  //   users.registerIsStarted
+  //     ? "Регистрация еще не началась"
+  //     : info.status === "OPENED"
+  //     ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
+  //     : "Регистрация завершена";
+  // },
+  // ...mapState(useUsers, ["segments"]),
+  //   },
+  // },
+  // methods: {
+  //   convertTime,
+  //   changeFlight() {
+  //     this.$emit("change-flight");
+  //   },
+  // },
 };
 </script>
 

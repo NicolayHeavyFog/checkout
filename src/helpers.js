@@ -1,4 +1,4 @@
-import { isAfter } from "date-fns";
+// import { isAfter } from "date-fns";
 // import format from "date-fns/format";
 // import ruLocale from "date-fns/locale/ru";
 import { useUsers } from "@/store/users";
@@ -17,8 +17,9 @@ export function comparisonTime(t) {
   if (!t) return null;
   const timeOne = t.split(" ");
   const timeOneParsed =
-    timeOne[0].split(".").reverse().join(".") + " " + timeOne[1];
-  return isAfter(new Date(), new Date(timeOneParsed));
+    timeOne[0].split(".").reverse().join("/") + " " + timeOne[1];
+  return +new Date() > +new Date(timeOneParsed);
+  // return isAfter(new Date(), new Date(timeOneParsed));
 }
 
 export function getPossibleActionsByUser(ticketInfo) {

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import api from "@/api/index.js";
+import { event } from "vue-gtag";
 
 import {
   getKeyFlight,
@@ -45,7 +46,7 @@ export const useUsers = defineStore("users", {
     },
     totalForms() {
       return this.persons.reduce((acc, cp) => {
-        if (cp.checked === "NOT_CHECKED") return acc + 1;
+        if (cp.checked === "NOT_CHECKED" && cp?.normalSeat) return acc + 1;
         else return acc + 0;
       }, 0);
     },
@@ -257,7 +258,7 @@ export const useUsers = defineStore("users", {
         );
 
         this.fetchStatus.success = false;
-
+        event("ticket_api_error", { method: "Google" });
         return response.data;
       });
       if (ticketInfo.status === "fulfilled" && mapInfo.status === "rejected") {

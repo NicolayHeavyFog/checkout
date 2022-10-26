@@ -145,6 +145,7 @@ import useCardMap from "@/hooks/useCardMap";
 import useCardMapDOM from "@/hooks/useCardMapDOM";
 import { BLUE } from "@/constants";
 import { ref, watch } from "vue";
+import { event } from "vue-gtag";
 
 export default {
   name: "CardMap",
@@ -181,6 +182,7 @@ export default {
 
     function wrapperToEmailFrom() {
       emit("close");
+      event("gopay", { method: "Google" });
       toEmailForm();
     }
 
