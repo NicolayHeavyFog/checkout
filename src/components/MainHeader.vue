@@ -89,16 +89,17 @@ export default {
     const flightStatus = computed(() => {
       console.log(storeUsers.persons.length);
       if (storeUsers.persons.length) {
-        console.log("into first if");
         console.log(storeUsers.registerIsStarted);
         if (storeUsers.registerIsStarted) {
           if (props.info.status === "OPENED") {
-            console.log("here");
             return `Регистрация завершится ${convertTime(
               props.info.webCheckInClose
             )}`;
           }
-        }
+        } else
+          return `Регистрация начнётся ${convertTime(
+            props.info.webCheckInOpen
+          )}`;
         return "Регистрация завершена";
       } else return "";
     });
@@ -110,40 +111,6 @@ export default {
       changeFlight,
     };
   },
-  // data() {
-  //   return {
-  //     users: useUsers(),
-  //   };
-  // },
-  // computed: {
-  // flightStatus: function () {
-  //   if (this.users) {
-  //     if (this.users.registerIsStarted) {
-  //       if (this.info.status === "OPENED") {
-  //         console.log("here");
-  //         return `Регистрация завершится ${convertTime(
-  //           this.info.webCheckInClose
-  //         )}`;
-  //       } else return "";
-  //     } else {
-  //       return "Регистрация завершена";
-  //     }
-  //   } else return "";
-  //   users.registerIsStarted
-  //     ? "Регистрация еще не началась"
-  //     : info.status === "OPENED"
-  //     ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
-  //     : "Регистрация завершена";
-  // },
-  // ...mapState(useUsers, ["segments"]),
-  //   },
-  // },
-  // methods: {
-  //   convertTime,
-  //   changeFlight() {
-  //     this.$emit("change-flight");
-  //   },
-  // },
 };
 </script>
 

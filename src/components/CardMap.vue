@@ -182,7 +182,7 @@ export default {
 
     function wrapperToEmailFrom() {
       emit("close");
-      event("gopay", { method: "Google" });
+      event("gopay_map", { method: "Google" });
       toEmailForm();
     }
 
