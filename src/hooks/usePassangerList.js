@@ -1,43 +1,27 @@
 import { ref } from "vue";
 import { useUsers } from "@/store/users";
+import { createRequest } from "@/helpers";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default function usePassangerList() {
+  const gtm = useGtm();
   const sheet = ref(false);
   const storeUsers = useUsers();
   const disabledButton = ref(true);
 
-  function fillUpFieldsEachPerson(person, index) {
-    return {
-      [`passenger-${index}-last_name`]: person.lastName,
-      [`passenger-${index}-ticket_number`]: person.ticketNumber,
-      [`passenger-${index}-seat`]: person.normalSeat,
-      [`passenger-${index}-salon`]: "any",
-    };
-  }
-
-  // document.cookie =
-  //   "csrfmiddlewaretoken=bEGEKX8OqxgmfCnx3KCWCxMAGFYU2FnANkrKi6Do2bu74d59aBBVPaxNTaStDaYg";
   async function doRegister() {
-    let objRequest = {
-      csrfmiddlewaretoken: document.cookie.match(
-        /csrfmiddlewaretoken=(.+?)(;|$)/
-      )[1],
-      flight_number: storeUsers.basePerson.flight_number,
-      departure_date: storeUsers.basePerson.departure_date,
-      email: storeUsers.basePerson.email,
-      tariff: "oneway",
-      airline: storeUsers.basePerson.airline,
-      checkoutId: storeUsers.basePerson.checkoutId,
-      ["passenger-TOTAL_FORMS"]: storeUsers.persons.length,
-      ["passenger-INITIAL_FORMS"]: 1,
-      ["passenger-MIN_NUM_FORMS"]: 1,
-      ["passenger-MAX_NUM_FORMS"]: 12,
-    };
-
-    storeUsers.persons.forEach((p, i) => {
-      objRequest = { ...objRequest, ...fillUpFieldsEachPerson(p, i) };
+    const requestStr = createRequest();
+    // event("gopay", { method: "Google" });
+    gtm.trackEvent({
+      event: "gopay",
+      category: "category",
+      action: "click",
+      label: "My custom component trigger",
+      value: 5000,
+      noninteraction: false,
     });
-    const response = (await storeUsers.register(objRequest)).data;
+    const response = (await storeUsers.register(requestStr.trim())).data;
     if (response.text) window.location.href = response.text;
     else console.log("сейчас должен был произойти редирект, но его нет :(");
   }

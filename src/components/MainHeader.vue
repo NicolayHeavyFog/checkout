@@ -1,7 +1,13 @@
 <template>
   <header
     class="header"
-    :class="info.status === 'OPENED' ? 'registration-open' : ''"
+    :class="
+      storeUsers.registerIsStarted
+        ? info.status === 'OPENED'
+          ? 'registration-open'
+          : ''
+        : 'registration-open'
+    "
   >
     <div class="container header__sceleton" v-if="preloader">
       <v-skeleton-loader
@@ -42,18 +48,14 @@
         ><svg class="header__submessage-icon">
           <use xlink:href="#timeIcon"></use>
         </svg>
-        <span class="header__submessage-notification">{{
-          info.status === "OPENED"
-            ? `Регистрация завершится ${convertTime(info.webCheckInClose)}`
-            : "Регистрация завершена"
-        }}</span>
+        <span class="header__submessage-notification">{{ flightStatus }}</span>
       </span>
       <v-btn
         @click="changeFlight()"
         absolute
         x-large
         class="button button__secondary header__button"
-        v-if="segments"
+        v-if="storeUsers.segments"
       >
         Изменить данные рейса
       </v-btn>
@@ -63,7 +65,7 @@
 
 <script>
 import { convertTime } from "@/helpers";
-import { mapState } from "pinia";
+import { computed } from "vue";
 import { useUsers } from "@/store/users";
 export default {
   name: "MainHeader",
@@ -76,17 +78,38 @@ export default {
       type: Object,
     },
   },
-  data() {
-    return {};
-  },
-  computed: {
-    ...mapState(useUsers, ["segments"]),
-  },
-  methods: {
-    convertTime,
-    changeFlight() {
-      this.$emit("change-flight");
-    },
+
+  setup(props, { emit }) {
+    const storeUsers = useUsers();
+    convertTime;
+    function changeFlight() {
+      emit("change-flight");
+    }
+
+    const flightStatus = computed(() => {
+      console.log(storeUsers.persons.length);
+      if (storeUsers.persons.length) {
+        console.log(storeUsers.registerIsStarted);
+        if (storeUsers.registerIsStarted) {
+          if (props.info.status === "OPENED") {
+            return `Регистрация завершится ${convertTime(
+              props.info.webCheckInClose
+            )}`;
+          }
+        } else
+          return `Регистрация начнётся ${convertTime(
+            props.info.webCheckInOpen
+          )}`;
+        return "Регистрация завершена";
+      } else return "";
+    });
+
+    return {
+      storeUsers,
+      flightStatus,
+      convertTime,
+      changeFlight,
+    };
   },
 };
 </script>

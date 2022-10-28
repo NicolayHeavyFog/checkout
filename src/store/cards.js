@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid";
 import { defineStore } from "pinia";
-// import { reactive } from "vue";
 import { useUsers } from "@/store/users";
 
 export const useCards = defineStore("cards", {
@@ -33,7 +32,6 @@ export const useCards = defineStore("cards", {
     },
 
     validateCard(id) {
-      // const cards = [...this.cards];
       const i = this.getCardIndexById(id);
       const existsCard = this.getCardByTicketNumber(this.cards[i].ticketNumber);
       let notification = {};
@@ -45,7 +43,6 @@ export const useCards = defineStore("cards", {
         this.cards[i].isValidTicketNumber = false;
         return notification;
       } else if (this.cards[i].ticketNumber.length !== 13) {
-        // this.cards[i].ticketNumber.match(/^\d+$/)
         notification = {
           message: "Некорректный номер билета",
           type: "ticketNumber",

@@ -53,7 +53,7 @@
       <div class="mailer__win" id="mail">
         <label
           ><span class="mailer__label"
-            >Эл. почта для подтверждение о регистрации</span
+            >Эл. почта для получения посадочных талонов</span
           >
           <v-app>
             <v-text-field
@@ -76,7 +76,7 @@
       v-if="storeUsers.basePersonIsDefined && statusFlight === 'OPENED'"
     >
       <span class="output__message">
-        Количество пассажиров: {{ storeUsers.persons.length }}</span
+        Количество пассажиров: {{ storeUsers.totalForms }}</span
       >
       <span class="output__message"
         >К оплате: {{ storeUsers.totalPrice }} ₽</span
@@ -125,9 +125,12 @@ export default {
               mapSeats: currentPerson.mapSeats,
             },
             {
+              possibleActions: currentPerson.possibleActions,
+              normalSeat: currentPerson.normalSeat,
               status: currentPerson.status,
               isConfirmed: currentPerson.mapSeats ? true : false,
               personIsDefined: true,
+              checked: currentPerson.checked === "CHECKED",
             }
           );
         });
@@ -151,16 +154,13 @@ export default {
     );
 
     watch(
-      () => [
-        storeUsers.persons[0].lastName,
-        storeUsers.persons[0].normalSeat,
-        storeUsers.persons[0].ticketNumber,
-      ],
-      ([lastName, seat, ticketNumber]) => {
-        if (lastName && seat && ticketNumber) {
+      () => storeUsers.persons,
+      () => {
+        if (storeUsers.totalForms && storeUsers.totalPrice) {
           disabledButton.value = false;
         } else disabledButton.value = true;
-      }
+      },
+      { immediate: true, deep: true }
     );
 
     return {

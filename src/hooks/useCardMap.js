@@ -1,12 +1,15 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, nextTick } from "vue";
 import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
 import { useCards } from "@/store/cards";
+import { numberFormat } from "@/helpers";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default function useCardMap() {
+  const gtm = useGtm();
   const currentPerson = ref(null);
   const currentIndexPerson = ref(null);
-
   const activeButtonElements = ref([]);
   const snackbar = ref(false);
   const snackbarText = ref(null);
@@ -24,6 +27,70 @@ export default function useCardMap() {
         store.updatePerson(i, { active: true });
       } else store.updatePerson(i, { active: false });
     });
+  }
+
+  function doPersonStatus(person) {
+    if (person?.normalSeat && !person?.seatRate) {
+      return `Место ${person.normalSeat} за ${numberFormat(
+        store.findRateBySeat(person.mapSeats, person.normalSeat)
+      )} ₽`;
+
+      // if (!person.possibleActions.includes("CHANGE_SEAT")) {
+      //   return `Место ${person.normalSeat} за ${store.findRateBySeat(
+      //     person.mapSeats,
+      //     person.normalSeat
+      //   )} ₽`;
+    } else {
+      return person?.normalSeat
+        ? `Место ${person.normalSeat} за ${numberFormat(person.seatRate)} ₽`
+        : "Место не выбрано";
+    }
+  }
+
+  async function setSeatCurrentPersonDOM({ indexCurrentPerson, indexElement }) {
+    await nextTick();
+    const activeSelectedSeat = document
+      .querySelector(`.card-map__map-seat[data-index="${indexElement}"]`)
+      .querySelector(".card-map__map-button");
+    const letter = store.persons[indexCurrentPerson].lastName[0];
+    const currentPerson = activeButtonElements.value.find(
+      (li) => li?.personIndex === indexCurrentPerson
+    );
+
+    const className =
+      currentPerson?.activeClass || "selected-active-" + nanoid(5);
+
+    activeSelectedSeat.setAttribute("data-letter", letter);
+    const indicator = activeSelectedSeat.classList.toggle(className);
+
+    if (!indicator) {
+      store.updatePerson(indexCurrentPerson, {
+        normalSeat: null,
+        seatRate: null,
+      });
+      storeCards.patchCard(
+        storeCards.getCardIdByIndexPerson(indexCurrentPerson),
+        { normalSeat: null }
+      );
+    }
+
+    const newActiveLiElement = {
+      personIndex: indexCurrentPerson,
+
+      activeLi: activeSelectedSeat,
+      lastActiveLi: currentPerson?.activeLi,
+      activeClass: className,
+
+      activeIndex: indexElement,
+      lastActiveIndex: currentPerson?.activeIndex,
+    };
+
+    const i = activeButtonElements.value.findIndex(
+      (li) => li?.personIndex === indexCurrentPerson
+    );
+    if (i !== -1) activeButtonElements.value.splice(i, 1);
+
+    activeButtonElements.value.push(newActiveLiElement);
   }
 
   async function setSeatCurrentPerson({
@@ -47,63 +114,27 @@ export default function useCardMap() {
         )
         .then(() => {
           loadingSelect.value = false;
-
           if (loadingLi.indexPerson === indexCurrentPerson)
             loadingLi.status = false;
         });
+
       console.log(response);
+      // event("select_seat", { method: "Google" });
+      gtm.trackEvent({
+        event: "select_seat",
+        category: "category",
+        action: "click",
+        label: "My custom component trigger",
+        value: 5000,
+        noninteraction: false,
+      });
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
       storeCards.patchCard(
         storeCards.getCardIdByIndexPerson(indexCurrentPerson),
         { normalSeat: seat }
       );
       updateActivePerson(indexCurrentPerson);
-      // currentPerson.value = store.persons[indexCurrentPerson];
-      // setTimeout(() => {
-      const activeSelectedSeat = document
-        .querySelector(`.card-map__map-seat[data-index="${indexElement}"]`)
-        .querySelector(".card-map__map-button");
-      const letter = store.persons[indexCurrentPerson].lastName[0];
-      const currentPerson = this.activeButtonElements.find(
-        (li) => li?.personIndex === indexCurrentPerson
-      );
-
-      const className =
-        currentPerson?.activeClass || "selected-active-" + nanoid(5);
-
-      activeSelectedSeat.setAttribute("data-letter", letter);
-      const indicator = activeSelectedSeat.classList.toggle(className);
-
-      if (!indicator) {
-        store.updatePerson(indexCurrentPerson, {
-          normalSeat: null,
-          seatRate: null,
-        });
-        storeCards.patchCard(
-          storeCards.getCardIdByIndexPerson(indexCurrentPerson),
-          { normalSeat: null }
-        );
-      }
-
-      const newActiveLiElement = {
-        personIndex: indexCurrentPerson,
-
-        activeLi: activeSelectedSeat,
-        lastActiveLi: currentPerson?.activeLi,
-        activeClass: className,
-
-        activeIndex: indexElement,
-        lastActiveIndex: currentPerson?.activeIndex,
-      };
-
-      const i = activeButtonElements.value.findIndex(
-        (li) => li?.personIndex === indexCurrentPerson
-      );
-      if (i !== -1) activeButtonElements.value.splice(i, 1);
-
-      activeButtonElements.value.push(newActiveLiElement);
-      // this.rigedIndex++;
-      // }, 0);
+      setSeatCurrentPersonDOM({ indexCurrentPerson, indexElement });
     } else {
       snackbarText.value = "Это место уже выбрано!";
       snackbar.value = true;
@@ -111,12 +142,11 @@ export default function useCardMap() {
   }
 
   function setNextPerson() {
-    if (currentIndexPerson.value === store.persons.length - 1) {
-      currentIndexPerson.value = 0;
-    } else {
-      currentIndexPerson.value++;
-    }
-
+    const i = store.persons.findIndex(
+      (p) => !p.normalSeat && p.possibleActions.includes("CHANGE_SEAT")
+    );
+    if (i === -1) return;
+    currentIndexPerson.value = i;
     currentPerson.value = store.persons[currentIndexPerson.value];
     updateActivePerson(currentIndexPerson.value);
   }
@@ -135,5 +165,7 @@ export default function useCardMap() {
     setNextPerson,
     setSeatCurrentPerson,
     updateActivePerson,
+    doPersonStatus,
+    setSeatCurrentPersonDOM,
   };
 }

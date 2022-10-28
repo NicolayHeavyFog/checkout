@@ -163,7 +163,6 @@ export default {
     ...mapActions(useUsers, [
       "getPerson",
       "getAirline",
-      "getSegment",
       "getInfoFlight",
       "checkValidPassenger",
     ]),

@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
 import api from "@/api/index.js";
-import { getKeyFlight } from "@/helpers";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
+
+import {
+  getKeyFlight,
+  comparisonTime,
+  getPossibleActionsByUser,
+} from "@/helpers";
 // import _ from "@/mock";
 
 export const useUsers = defineStore("users", {
@@ -24,6 +31,8 @@ export const useUsers = defineStore("users", {
       availableReload: null,
       textMessage: null,
     },
+    webCheckInOpen: null,
+    gtm: useGtm(),
   }),
   getters: {
     checkSeats() {
@@ -33,10 +42,22 @@ export const useUsers = defineStore("users", {
       });
       return result;
     },
+    registerIsStarted() {
+      if (this?.webCheckInOpen) return comparisonTime(this.webCheckInOpen);
+      else return null;
+    },
+    totalForms() {
+      return this.persons.reduce((acc, cp) => {
+        if (cp.checked === "NOT_CHECKED" && cp?.normalSeat) return acc + 1;
+        else return acc + 0;
+      }, 0);
+    },
     totalPrice() {
       return (
         this.persons.reduce((acc, cp) => {
-          return (acc += cp.seatRate);
+          if (cp.checked === "NOT_CHECKED" && cp.seatRate)
+            return acc + cp.seatRate;
+          else return acc + 0;
         }, 0) || 0
       );
     },
@@ -48,6 +69,9 @@ export const useUsers = defineStore("users", {
     },
     findPersonByTicket() {
       return (tN) => this.persons.find((p) => p.ticketNumber === tN);
+    },
+    findIndexPersonByTicket() {
+      return (tN) => this.persons.findIndex((p) => p.ticketNumber === tN);
     },
     parseSegments() {
       return (segmentsData) => {
@@ -72,6 +96,26 @@ export const useUsers = defineStore("users", {
     },
   },
   actions: {
+    findRateBySeat(mapSeats, seat) {
+      let result = null;
+
+      const lineIndex = mapSeats.rows.findIndex(
+        (row) => Number(row.row_number) === parseInt(seat)
+      );
+
+      result = mapSeats.rows[lineIndex].seats.find(
+        (s) => String(s.seatNumber) === String(seat)
+      );
+
+      return result.rate;
+    },
+    setNotification(type, availableReload, textMessage) {
+      this.notification = {
+        type: type,
+        availableReload: availableReload,
+        textMessage: textMessage,
+      };
+    },
     deletePerson(ticketNumber) {
       if (!ticketNumber) return;
       const persons = [...this.persons];
@@ -105,29 +149,76 @@ export const useUsers = defineStore("users", {
           await api.passenger.infoDetailed({ type: "getSeat", ...payload })
         ).data[0];
       } catch ({ response }) {
-        this.notification = {
-          type: "error",
-          availableReload: false,
-          textMessage: response.data.error,
-        };
+        this.setNotification("error", false, response.data.error);
         return response;
       }
     },
     async register(payload) {
-      return await api.passenger.register(payload);
+      return await api.requestData.register(payload);
     },
-    // eslint-disable-next-line no-unused-vars
+    parseResponse(ticketInfo, mapSeat = null) {
+      const instancePerson = {};
+      if (this.flightKey) {
+        const newFlightKey = getKeyFlight(ticketInfo.segments[0]);
+
+        if (newFlightKey !== this.flightKey) {
+          return {
+            compatibility: false,
+          };
+        }
+      } else this.flightKey = getKeyFlight(ticketInfo.segments[0]);
+
+      this.webCheckInOpen = ticketInfo.segments[0].stages.webCheckInOpen;
+      this.statusFlight = ticketInfo.segments[0].status;
+      if (!this.basePerson.departure_date)
+        this.basePerson.departure_date = ticketInfo.segments[0].departureDate;
+      if (!this.basePerson.flight_number)
+        this.basePerson.flight_number = ticketInfo.segments[0].flightNumber;
+      instancePerson.possibleActions = getPossibleActionsByUser(ticketInfo);
+      instancePerson.checked = ticketInfo.passengersType;
+      instancePerson.fullName = ticketInfo.passengers[0].name;
+      instancePerson.status = ticketInfo.segments[0].status;
+
+      if (instancePerson.checked === "CHECKED") {
+        instancePerson.normalSeat =
+          ticketInfo.passengers[0].segments[0].chosenSeatThroughGui.number;
+      } else if (
+        instancePerson.checked === "NOT_CHECKED" &&
+        ticketInfo.passengers[0].segments[0].chosenSeatThroughGui
+          ?.autoAssigned === false
+      ) {
+        instancePerson.normalSeat =
+          ticketInfo.passengers[0].segments[0].chosenSeatThroughGui.number;
+        if (mapSeat) {
+          instancePerson.seatRate = this.findRateBySeat(
+            mapSeat,
+            instancePerson.normalSeat
+          );
+        }
+      }
+
+      return instancePerson;
+    },
+    updateUsers(instancePerson) {
+      const persons = [...this.persons];
+
+      const index = this.persons.findIndex(
+        (currentPerson) =>
+          currentPerson?.ticketNumber === instancePerson.ticketNumber
+      );
+
+      if (index !== -1) persons[index] = instancePerson;
+      else persons.push(instancePerson);
+
+      this.persons = persons;
+    },
     async getPerson(id) {
       try {
         this.basePerson = (await api.passenger.info(id)).data;
         this.basePersonEmail = this.basePerson.email;
         return true;
       } catch ({ response }) {
-        this.notification = {
-          type: "error",
-          availableReload: false,
-          textMessage: response.data.detail,
-        };
+        this.setNotification("error", false, response.data.detail);
         this.fetchStatus.success = false;
         return false;
       }
@@ -138,61 +229,15 @@ export const useUsers = defineStore("users", {
           await api.passenger.airline(this.basePerson.airline)
         ).data;
         return true;
-      } catch (err) {
-        this.notification = {
-          type: "error",
-          availableReload: false,
-          textMessage: "Произошла ошибка",
-        };
+      } catch ({ response }) {
+        this.setNotification("error", false, response.data.detail);
         this.fetchStatus.success = false;
         return false;
       }
     },
-    // eslint-disable-next-line no-unused-vars
-    async getSegment(lastName, ticketNumber) {
-      try {
-        // await this.getPerson(id);
-        // if (!this.basePersonIsDefined) {
-
-        // },
-        // await this.getAirline();
-
-        // eslint-disable-next-line no-unused-vars
-        const payload = {
-          // airline: this.airline.iata_code,
-          // passenger: {
-          //   lastName,
-          //   ticketNumber,
-          // },
-
-          airline: "N5",
-          passenger: {
-            lastName: "lastName",
-            ticketNumber: "1234321223412",
-          },
-        };
-        const segmentsData = (
-          await api.passenger.infoDetailed({ type: "ticketsInfo", ...payload })
-        ).data;
-        this.fetchStatus.success = true;
-        return segmentsData;
-      } catch ({ response }) {
-        this.basePersonIsDefined = false;
-        this.notification = {
-          type: "error",
-          availableReload: false,
-          textMessage: response.data.error,
-        };
-        this.fetchStatus.success = false;
-      }
-    },
     async getInfoFlight({ lastName, ticketNumber }, segmentIndex = 0) {
-      this.notification = {
-        type: null,
-        availableReload: null,
-        textMessage: null,
-      };
-      const instancePerson = {
+      this.setNotification(null, null, null);
+      let instancePerson = {
         lastName: lastName,
         ticketNumber: ticketNumber,
         segmentIndex: String(0),
@@ -208,62 +253,52 @@ export const useUsers = defineStore("users", {
         api.passenger.infoDetailed({ type: "ticketInfo", ...payload }),
         api.passenger.infoDetailed({ type: "mapInfo", ...payload }),
       ]).catch(({ response }) => {
-        this.notification = {
-          type: "error",
-          availableReload: true,
-          textMessage: "Ошибка получения билета",
-        };
+        this.setNotification(
+          "error",
+          true,
+          response.data?.detail || "Ошибка получения билета"
+        );
+
         this.fetchStatus.success = false;
+        // event("ticket_api_error", { method: "Google" });
+
+        this.gtm.trackEvent({
+          event: "ticket_api_error",
+          category: "category",
+          action: "click",
+          label: "My custom component trigger",
+          value: 5000,
+          noninteraction: false,
+        });
+
         return response.data;
       });
       if (ticketInfo.status === "fulfilled" && mapInfo.status === "rejected") {
-        if (this.flightKey) {
-          const newFlightKey = getKeyFlight(ticketInfo.value.data.segments[0]);
-          if (newFlightKey !== this.flightKey) {
-            return {
-              compatibility: false,
-            };
-          }
-        } else this.flightKey = getKeyFlight(ticketInfo.value.data.segments[0]);
-        this.statusFlight = ticketInfo.value.data.segments[0].status;
-        const index = this.persons.findIndex(
-          (currentPerson) => currentPerson?.ticketNumber === ticketNumber
-        );
-        const persons = [...this.persons];
-        if (index !== -1) persons[index] = instancePerson;
-        else persons.push(instancePerson);
-        this.persons = persons;
-
-        return { flightInfo: ticketInfo.value.data.segments[0] };
+        instancePerson = {
+          ...instancePerson,
+          ...this.parseResponse(ticketInfo.value.data),
+        };
+        this.updateUsers(instancePerson);
+        return {
+          flightInfo: ticketInfo.value.data.segments[0],
+          instancePerson,
+        };
       } else if (
         ticketInfo.status === "fulfilled" &&
         mapInfo.status === "fulfilled"
       ) {
-        if (this.flightKey) {
-          const newFlightKey = getKeyFlight(ticketInfo.value.data.segments[0]);
-          if (newFlightKey !== this.flightKey) {
-            return {
-              compatibility: false,
-            };
-          }
-        } else this.flightKey = getKeyFlight(ticketInfo.value.data.segments[0]);
+        instancePerson = {
+          ...instancePerson,
+          ...this.parseResponse(ticketInfo.value.data, mapInfo.value.data),
+        };
 
         instancePerson.mapSeats = mapInfo.value.data;
-        instancePerson.fullName = ticketInfo.value.data.passengers[0].name;
-        instancePerson.status = ticketInfo.value.data.segments[0].status;
-        this.statusFlight = ticketInfo.value.data.segments[0].status;
-        const index = this.persons.findIndex(
-          (currentPerson) => currentPerson?.ticketNumber === ticketNumber
-        );
-        const persons = [...this.persons];
-
-        if (index !== -1) persons[index] = instancePerson;
-        else persons.push(instancePerson);
-
-        this.persons = persons;
+        this.updateUsers(instancePerson);
         return {
           flightInfo: ticketInfo.value.data.segments[0],
+          checked: ticketInfo.value.data.passengersType,
           mapSeats: mapInfo.value.data,
+          instancePerson,
         };
       } else {
         return { flightInfo: ticketInfo.value.data.segments[0] };
@@ -296,7 +331,3 @@ export const useUsers = defineStore("users", {
     },
   },
 });
-
-//   passenger.status !== "CLOSED" &&
-//   passenger.status !== "OPENED" &&
-//   passenger.status !== "TAKE_OFF"
