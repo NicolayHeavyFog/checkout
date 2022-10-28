@@ -104,6 +104,7 @@ export default {
       uniquePrice.value = getUniquePrice(props.mapSeats);
       mapSeatsModified.value = modifyMapSeats(props.mapSeats);
 
+      console.log(props.person.normalSeat);
       if (props.person.normalSeat) {
         const seat = props.person.normalSeat;
         const indexCurrentPerson = storeUsers.findIndexPersonByTicket(
@@ -113,9 +114,10 @@ export default {
         const internalIndex = uniqueHeaderLetters.value.findIndex(
           (letter) => letter === seat.slice(-1)
         );
-        console.log(extrenalIndex, internalIndex);
+
         const indexElement = `${extrenalIndex}:${internalIndex}`;
-        if (extrenalIndex && internalIndex) {
+
+        if (extrenalIndex !== -1 && internalIndex) {
           emit("forceUpdate", {
             indexCurrentPerson,
             indexElement,

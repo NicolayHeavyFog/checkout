@@ -8,7 +8,6 @@ export function convertTime(time) {
   const b = time.split(" ");
   // const a = b[0].split(".").reverse().join("/") + " " + b[1];
   // const result = format(a);
-  // console.log(result);
   return b.join(" в ");
   // return format(a, timeFormat, { locale: ruLocale });
 }

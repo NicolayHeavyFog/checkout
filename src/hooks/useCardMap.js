@@ -30,11 +30,16 @@ export default function useCardMap() {
   }
 
   function doPersonStatus(person) {
-    if (!person.possibleActions.includes("CHANGE_SEAT")) {
-      return `Место ${person.normalSeat} за ${store.findRateBySeat(
-        person.mapSeats,
-        person.normalSeat
+    if (person?.normalSeat && !person?.seatRate) {
+      return `Место ${person.normalSeat} за ${numberFormat(
+        store.findRateBySeat(person.mapSeats, person.normalSeat)
       )} ₽`;
+
+      // if (!person.possibleActions.includes("CHANGE_SEAT")) {
+      //   return `Место ${person.normalSeat} за ${store.findRateBySeat(
+      //     person.mapSeats,
+      //     person.normalSeat
+      //   )} ₽`;
     } else {
       return person?.normalSeat
         ? `Место ${person.normalSeat} за ${numberFormat(person.seatRate)} ₽`
@@ -43,7 +48,6 @@ export default function useCardMap() {
   }
 
   async function setSeatCurrentPersonDOM({ indexCurrentPerson, indexElement }) {
-    console.log(indexCurrentPerson, indexElement);
     await nextTick();
     const activeSelectedSeat = document
       .querySelector(`.card-map__map-seat[data-index="${indexElement}"]`)
