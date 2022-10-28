@@ -3,9 +3,11 @@ import { nanoid } from "nanoid";
 import { useUsers } from "@/store/users";
 import { useCards } from "@/store/cards";
 import { numberFormat } from "@/helpers";
-import { event } from "vue-gtag";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default function useCardMap() {
+  const gtm = useGtm();
   const currentPerson = ref(null);
   const currentIndexPerson = ref(null);
   const activeButtonElements = ref([]);
@@ -113,7 +115,15 @@ export default function useCardMap() {
         });
 
       console.log(response);
-      event("select_seat", { method: "Google" });
+      // event("select_seat", { method: "Google" });
+      gtm.trackEvent({
+        event: "select_seat",
+        category: "category",
+        action: "click",
+        label: "My custom component trigger",
+        value: 5000,
+        noninteraction: false,
+      });
       store.updatePerson(indexCurrentPerson, { normalSeat: seat, seatRate });
       storeCards.patchCard(
         storeCards.getCardIdByIndexPerson(indexCurrentPerson),

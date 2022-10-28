@@ -145,7 +145,8 @@ import useCardMap from "@/hooks/useCardMap";
 import useCardMapDOM from "@/hooks/useCardMapDOM";
 import { BLUE } from "@/constants";
 import { ref, watch } from "vue";
-import { event } from "vue-gtag";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default {
   name: "CardMap",
@@ -157,6 +158,7 @@ export default {
   },
 
   setup(props, { emit }) {
+    const gtm = useGtm();
     const currentSeatsMap = ref(null);
     const {
       currentPerson,
@@ -182,7 +184,15 @@ export default {
 
     function wrapperToEmailFrom() {
       emit("close");
-      event("gopay_map", { method: "Google" });
+      // event("gopay_map", { method: "Google" });
+      gtm.trackEvent({
+        event: "gopay_map",
+        category: "category",
+        action: "click",
+        label: "My custom component trigger",
+        value: 5000,
+        noninteraction: false,
+      });
       toEmailForm();
     }
 

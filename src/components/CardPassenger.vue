@@ -97,7 +97,8 @@ import BaseButton from "@/components/BaseButton.vue";
 import useCardPassenger from "@/hooks/useCardPassenger";
 import { useCards } from "@/store/cards";
 import { getKeyFlight } from "@/helpers";
-import { event } from "vue-gtag";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 export default {
   name: "CardPassenger",
@@ -114,6 +115,7 @@ export default {
   },
   emit: ["openCardMap"],
   setup(props, { emit }) {
+    const gtm = useGtm();
     const storeCards = useCards();
     const personChangedInputs = ref(false);
     const errorLog = reactive({ message: null, type: null });
@@ -149,7 +151,15 @@ export default {
             active: true,
           }
         );
-        event("choose_seat", { method: "Google" });
+        // event("choose_seat", { method: "Google" });
+        gtm.trackEvent({
+          event: "choose_seat",
+          category: "category",
+          action: "click",
+          label: "My custom component trigger",
+          value: 5000,
+          noninteraction: false,
+        });
         emit("openCardMap");
       } else {
         handlerNotification(storeCards.validateCard(id.value));

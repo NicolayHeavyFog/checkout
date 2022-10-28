@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import api from "@/api/index.js";
-import { event } from "vue-gtag";
+// import { event } from "vue-gtag";
+import { useGtm } from "@gtm-support/vue2-gtm";
 
 import {
   getKeyFlight,
@@ -31,6 +32,7 @@ export const useUsers = defineStore("users", {
       textMessage: null,
     },
     webCheckInOpen: null,
+    gtm: useGtm(),
   }),
   getters: {
     checkSeats() {
@@ -258,7 +260,17 @@ export const useUsers = defineStore("users", {
         );
 
         this.fetchStatus.success = false;
-        event("ticket_api_error", { method: "Google" });
+        // event("ticket_api_error", { method: "Google" });
+
+        this.gtm.trackEvent({
+          event: "ticket_api_error",
+          category: "category",
+          action: "click",
+          label: "My custom component trigger",
+          value: 5000,
+          noninteraction: false,
+        });
+
         return response.data;
       });
       if (ticketInfo.status === "fulfilled" && mapInfo.status === "rejected") {
